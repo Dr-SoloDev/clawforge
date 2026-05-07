@@ -1,0 +1,59 @@
+# AgentCast Example Script
+# This demonstrates a simple demo video for a web app.
+# Replace the URL and actions with your own app.
+
+project:
+  name: "My App Demo"
+  url: "http://localhost:3000"
+  output: "./output"
+  viewport:
+    width: 1280
+    height: 720
+
+voice:
+  engine: "edge-tts"
+  voice: "en-US-AndrewMultilingualNeural"
+  rate: "-5%"
+
+scenes:
+  - name: "opening"
+    narration: >
+      Welcome to My App, the fastest way to manage your projects.
+      Let me show you how it works in under two minutes.
+    actions:
+      - { type: "goto", url: "http://localhost:3000" }
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", dy: 400 }
+      - { type: "wait", ms: 2000 }
+      - { type: "scroll", y: 0 }
+
+  - name: "feature-demo"
+    narration: >
+      First, click Get Started. Then enter your project details.
+      The AI agent analyzes your input and generates a complete plan
+      in seconds.
+    actions:
+      - { type: "click", selector: "text=Get Started" }
+      - { type: "wait", ms: 2000 }
+      - { type: "fill", selector: "textarea", text: "Build a landing page for my SaaS product with pricing table and FAQ section." }
+      - { type: "press", selector: "textarea", key: "Control+Enter" }
+      - { type: "wait", ms: 5000 }
+
+  - name: "results"
+    narration: >
+      Here are the results. The system generated a full project plan
+      with timeline, milestones, and resource estimates.
+      Everything is editable and exportable.
+    actions:
+      - { type: "scroll", dy: 300 }
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", dy: 300 }
+      - { type: "wait", ms: 3000 }
+
+  - name: "closing"
+    narration: >
+      That's it! From idea to plan in under a minute.
+      Try it yourself at my app dot com. Thanks for watching!
+    actions:
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 5000 }

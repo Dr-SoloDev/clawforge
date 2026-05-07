@@ -1,0 +1,38 @@
+{
+  "name": "agentcast",
+  "version": "0.1.0",
+  "description": "AI Agent Video Production Toolkit — Script → Record → Narrate → Render",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "agentcast": "./bin/agentcast.js"
+  },
+  "scripts": {
+    "start": "node bin/agentcast.js",
+    "example": "node bin/agentcast.js examples/demo-script.yaml"
+  },
+  "keywords": [
+    "ai-agent",
+    "video-production",
+    "demo-video",
+    "playwright",
+    "tts",
+    "edge-tts",
+    "ffmpeg",
+    "automation",
+    "hackathon"
+  ],
+  "author": "Dr.solodev <contact@drsolodev.com>",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.52.0",
+    "yaml": "^2.7.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dr-SoloDev/agentcast.git"
+  }
+}
