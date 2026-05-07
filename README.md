@@ -1,4 +1,4 @@
-# AgentCast ⚡
+# ClawForge ⚡
 
 **AI Agent Video Production Toolkit** — Turn scripts into polished demo videos, fully automated.
 
@@ -6,13 +6,13 @@
 Script (YAML) → Playwright (Record) → edge-tts (Narrate) → ffmpeg (Render) → MP4
 ```
 
-## Why AgentCast?
+## Why ClawForge?
 
 Creating demo videos for hackathons, product launches, and pitches is painful. You either screen-record manually (inconsistent, time-consuming) or hire someone (expensive, slow).
 
-**AgentCast automates the entire pipeline:**
+**ClawForge automates the entire pipeline:**
 1. Write a simple YAML script describing your scenes and narration
-2. AgentCast records your app with Playwright, generates voiceover with TTS, and merges everything with ffmpeg
+2. ClawForge records your app with Playwright, generates voiceover with TTS, and merges everything with ffmpeg
 3. Get a polished MP4 — zero manual work
 
 Born from a real hackathon submission where the entire demo video was produced by an AI agent in one shot.
@@ -21,13 +21,13 @@ Born from a real hackathon submission where the entire demo video was produced b
 
 ```bash
 # Install
-npm install -g agentcast
+npm install -g clawforge
 
 # Install Playwright browsers (first time only)
 npx playwright install chromium
 
 # Run with a script
-agentcast examples/demo-script.yaml
+clawforge examples/demo-script.yaml
 ```
 
 ## Requirements
@@ -39,7 +39,7 @@ agentcast examples/demo-script.yaml
 
 ## Script Format
 
-AgentCast uses YAML scripts to define your video:
+ClawForge uses YAML scripts to define your video:
 
 ```yaml
 project:
@@ -92,8 +92,8 @@ scenes:
 
 ```
 ┌─────────────────────────────────────────────┐
-│              AgentCast CLI                   │
-│         (bin/agentcast.js)                   │
+│              ClawForge CLI                   │
+│         (bin/clawforge.js)                   │
 ├─────────────────────────────────────────────┤
 │           Script Loader                      │
 │     (YAML/JSON → Scene Objects)              │

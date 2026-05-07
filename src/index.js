@@ -1,5 +1,5 @@
 /**
- * AgentCast — Main Orchestrator
+ * ClawForge — Main Orchestrator
  * Script → Narrate → Record → Compose → MP4
  */
 
@@ -11,7 +11,7 @@ import { resolve } from 'path';
 
 export async function produce(scriptPath, options = {}) {
   const startTime = Date.now();
-  console.log('⚡ AgentCast — AI Agent Video Production');
+  console.log('⚡ ClawForge — AI Agent Video Production');
   console.log(`📄 Script: ${scriptPath}\n`);
 
   // Step 1: Load script

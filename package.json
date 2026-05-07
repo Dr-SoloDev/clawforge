@@ -1,15 +1,15 @@
 {
-  "name": "agentcast",
+  "name": "clawforge",
   "version": "0.1.0",
   "description": "AI Agent Video Production Toolkit — Script → Record → Narrate → Render",
   "type": "module",
   "main": "src/index.js",
   "bin": {
-    "agentcast": "./bin/agentcast.js"
+    "clawforge": "./bin/clawforge.js"
   },
   "scripts": {
-    "start": "node bin/agentcast.js",
-    "example": "node bin/agentcast.js examples/demo-script.yaml"
+    "start": "node bin/clawforge.js",
+    "example": "node bin/clawforge.js examples/demo-script.yaml"
   },
   "keywords": [
     "ai-agent",
@@ -33,6 +33,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Dr-SoloDev/agentcast.git"
+    "url": "https://github.com/Dr-SoloDev/clawforge.git"
   }
 }

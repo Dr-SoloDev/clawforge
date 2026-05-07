@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * AgentCast CLI
- * Usage: agentcast <script.yaml> [--output <dir>]
+ * ClawForge CLI
+ * Usage: clawforge <script.yaml> [--output <dir>]
  */
 
 import { produce } from '../src/index.js';
@@ -11,11 +11,11 @@ const args = process.argv.slice(2);
 
 if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
   console.log(`
-⚡ AgentCast — AI Agent Video Production Toolkit
+⚡ ClawForge — AI Agent Video Production Toolkit
 
 Usage:
-  agentcast <script.yaml>              Produce video from script
-  agentcast <script.yaml> -o <dir>     Specify output directory
+  clawforge <script.yaml>              Produce video from script
+  clawforge <script.yaml> -o <dir>     Specify output directory
 
 Options:
   -o, --output <dir>   Output directory (default: ./output)
@@ -23,8 +23,8 @@ Options:
   -v, --version        Show version
 
 Examples:
-  agentcast demo-script.yaml
-  agentcast my-app.yaml --output ./videos
+  clawforge demo-script.yaml
+  clawforge my-app.yaml --output ./videos
 `);
   process.exit(0);
 }
@@ -35,13 +35,13 @@ if (args.includes('--version') || args.includes('-v')) {
   const { dirname, join } = await import('path');
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const pkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf-8'));
-  console.log(`agentcast v${pkg.version}`);
+  console.log(`clawforge v${pkg.version}`);
   process.exit(0);
 }
 
 const scriptPath = args.find((a) => !a.startsWith('-'));
 if (!scriptPath) {
-  console.error('❌ No script file specified. Run: agentcast --help');
+  console.error('❌ No script file specified. Run: clawforge --help');
   process.exit(1);
 }
 
