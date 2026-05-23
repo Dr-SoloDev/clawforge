@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "clawforge": {
+      "command": "npx",
+      "args": ["clawforge-mcp"],
+      "description": "ClawForge video production toolkit for AI agents"
+    }
+  }
+}

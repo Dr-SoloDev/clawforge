@@ -17,18 +17,102 @@ Creating demo videos for hackathons, product launches, and pitches is painful. Y
 
 Born from a real hackathon submission where the entire demo video was produced by an AI agent in one shot.
 
+## 🤖 Built for AI Agents
+
+ClawForge v0.2+ provides a **programmatic SDK** designed specifically for AI agents like Claude Code, OpenClaw, Hermes, and custom agents. Agents can:
+
+- ✅ Generate videos programmatically via SDK
+- ✅ Track progress in real-time with events
+- ✅ Handle errors with structured error codes
+- ✅ Resume from checkpoints on failure
+- ✅ Validate scripts before execution
+- ✅ Integrate via MCP (Model Context Protocol)
+
 ## Quick Start
+
+### CLI Usage
 
 ```bash
 # Install
 npm install -g clawforge
 
-# Install Playwright browsers (first time only)
+# Install dependencies
+pip install edge-tts
 npx playwright install chromium
 
 # Run with a script
 clawforge examples/demo-script.yaml
+
+# Validate script
+clawforge validate my-script.yaml
+
+# Check dependencies
+clawforge check-deps
 ```
+
+### SDK Usage (for AI Agents)
+
+```javascript
+import { ClawForgeSDK } from 'clawforge';
+
+const forge = new ClawForgeSDK();
+
+// Track progress
+forge.on('stage:start', ({ stage }) => {
+  console.log(`Starting: ${stage}`);
+});
+
+forge.on('progress', ({ stage, percent }) => {
+  console.log(`${stage}: ${percent}%`);
+});
+
+// Produce video
+const result = await forge.produce({
+  project: {
+    name: 'My Demo',
+    url: 'http://localhost:3000',
+    output: './output',
+    viewport: { width: 1280, height: 720 }
+  },
+  voice: {
+    engine: 'edge-tts',
+    voice: 'en-US-AndrewMultilingualNeural'
+  },
+  scenes: [
+    {
+      name: 'intro',
+      narration: 'Welcome to my app demo',
+      actions: [
+        { type: 'goto', url: 'http://localhost:3000' },
+        { type: 'wait', ms: 2000 }
+      ]
+    }
+  ]
+});
+
+console.log('Video created:', result.outputPath);
+```
+
+### MCP Integration (for Claude Code)
+
+Add to your `.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "clawforge": {
+      "command": "npx",
+      "args": ["clawforge-mcp"]
+    }
+  }
+}
+```
+
+Now Claude Code can use ClawForge tools:
+- `clawforge_produce_video` - Generate videos
+- `clawforge_validate_script` - Validate scripts
+- `clawforge_check_dependencies` - Check dependencies
+- `clawforge_dry_run` - Pre-flight checks
 
 ## Requirements
 
@@ -88,10 +172,19 @@ scenes:
 | `wait` | `ms` | Wait for milliseconds |
 | `screenshot` | `name` | Take a screenshot |
 
+## Documentation
+
+- **[SDK Documentation](docs/SDK.md)** - Complete SDK guide for AI agents
+- **[Examples](examples/)** - Code examples and usage patterns
+- **[API Reference](src/types/index.d.ts)** - TypeScript type definitions
+
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────┐
+│         ClawForge SDK (v0.2+)                │
+│    Programmatic API for AI Agents            │
+├─────────────────────────────────────────────┤
 │              ClawForge CLI                   │
 │         (bin/clawforge.js)                   │
 ├─────────────────────────────────────────────┤
@@ -104,17 +197,34 @@ scenes:
 └──────────┴──────────┴───────────────────────┘
 ```
 
-## Roadmap
+## Features
 
-- [x] YAML script format
-- [x] Playwright recording engine
-- [x] edge-tts narrator
-- [x] ffmpeg composer
+### v0.2.0 (AI Agent SDK)
+
+- ✅ **Programmatic SDK** - Use ClawForge from code
+- ✅ **Event System** - Real-time progress tracking
+- ✅ **Error Handling** - Structured errors with recovery info
+- ✅ **Retry Policy** - Configurable retry logic
+- ✅ **Checkpointing** - Resume from failures
+- ✅ **Validation** - Pre-flight script validation
+- ✅ **MCP Server** - Claude Code integration
+- ✅ **TypeScript Types** - Full type safety
+
+### v0.1.0 (CLI)
+
+- ✅ YAML script format
+- ✅ Playwright recording engine
+- ✅ edge-tts narrator
+- ✅ ffmpeg composer
+
+### Roadmap
+
 - [ ] Voicebox integration (voice cloning)
 - [ ] Scene preview mode
 - [ ] Subtitle generation (SRT)
 - [ ] Multi-language support
 - [ ] Template library
+- [ ] Cloud rendering
 
 ## Origin Story
 

@@ -1,11 +1,26 @@
 {
   "name": "clawforge",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "AI Agent Video Production Toolkit — Script → Record → Narrate → Render",
   "type": "module",
-  "main": "src/index.js",
+  "main": "src/sdk-exports.js",
+  "types": "src/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/types/index.d.ts",
+      "import": "./src/sdk-exports.js"
+    },
+    "./sdk": {
+      "types": "./src/types/index.d.ts",
+      "import": "./src/sdk/clawforge-sdk.js"
+    },
+    "./mcp": {
+      "import": "./src/mcp/clawforge-mcp-server.js"
+    }
+  },
   "bin": {
-    "clawforge": "./bin/clawforge.js"
+    "clawforge": "./bin/clawforge.js",
+    "clawforge-mcp": "./bin/clawforge-mcp.js"
   },
   "scripts": {
     "start": "node bin/clawforge.js",
@@ -25,6 +40,7 @@
   "author": "Dr.solodev <contact@drsolodev.com>",
   "license": "MIT",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
     "playwright": "^1.52.0",
     "yaml": "^2.7.1"
   },
