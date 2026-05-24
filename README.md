@@ -245,13 +245,40 @@ Run `clawforge check-deps` to verify your environment.
 
 ---
 
-## Origin
+## Origin Story
 
-Born during a Solana hackathon. The KadiRail demo video was produced end-to-end by an AI agent — Playwright recorded the browser, edge-tts narrated, ffmpeg merged. Zero human in the loop.
+Last year, I — Dr.SoloDev — joined a hackathon with a project I was really confident in. The idea was strong, and the development was going smoothly.
 
-> If an AI agent can make a demo video, anyone should be able to.
+However, everything came to a halt at the final stage: creating the presentation video.
 
-Built by **[Dr.solodev](https://github.com/Dr-SoloDev)** ⚡ — full-cycle developer (Solana / DeFi / AI agents) based in Thailand 🇹🇭
+I spent many days and nights trying to edit the video myself. But since video editing is not my strength, I couldn't finish it in time. In the end, my solid project missed the submission deadline and never got the chance to shine.
+
+The frustration I felt during that time was immense.
+
+I began searching for tools that could help generate videos, but the more I looked, the more disappointed I became. No single tool could do the job completely.
+
+- Some tools could record the screen but had no voice.
+- Some had great voiceovers but poor control.
+- Some used AI but produced unstable results.
+- Others looked good but were too slow or complicated.
+
+They were all incomplete tools — like broken machines with hands but no legs, eyes but no voice, or legs but no brain.
+
+Tired of the limitations, I decided to take the best parts from multiple tools and combine them. With the help of my AI Agent **Hermes Turbo** as a development partner, I built the solution I truly needed.
+
+And so, **ClawForge** was born.
+
+The first time I saw my agent successfully run a simple YAML script and generate a complete, high-quality presentation video in just minutes, I was truly amazed.
+
+ClawForge was not created from just an idea. It was born from real pain — the pain of developers who pour their heart into a project, only to fail at the final step because of video production.
+
+That's why I decided to open-source it. So that other developers don't have to go through the same frustrating experience I did.
+
+> **Forged by an AI agent, for AI agents — and for every solo developer who's ever lost a hackathon to a missing demo video.**
+
+Every visible artifact in this repo — the code, the hero video, the logo, the banner, the docs, the tests, the CI — was produced end-to-end by AI agents. Zero human pixel-pushing. Zero human typing the documentation. If an AI agent can build the tool, you can build with it.
+
+Built by **[Dr.SoloDev](https://github.com/Dr-SoloDev)** ⚡ — full-cycle developer (Solana / DeFi / AI agents) based in Thailand 🇹🇭
 
 ## Connect
 
