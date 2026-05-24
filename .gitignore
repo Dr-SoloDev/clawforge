@@ -1,7 +1,21 @@
 node_modules/
 output/
+output-*/
 *.mp4
 *.webm
 *.mp3
 *.wav
 .DS_Store
+
+# Python venv
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Test/debug artifacts
+test_*.py
+*.log
+
+# Local examples (private project data)
+examples/secondhand-pos-*.yaml

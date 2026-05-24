@@ -36,7 +36,7 @@ export async function narrate(script) {
         '--write-media', outPath,
       ];
       if (voice.rate) {
-        args.push('--rate', voice.rate);
+        args.push(`--rate=${voice.rate}`);
       }
       await execFileAsync('edge-tts', args);
     } else {

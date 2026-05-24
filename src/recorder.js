@@ -36,7 +36,11 @@ export async function record(script, audioDurations) {
 
       const actionStart = Date.now();
       for (const action of scene.actions) {
-        await executeAction(page, action);
+        try {
+          await executeAction(page, action);
+        } catch (err) {
+          console.warn(`  ⚠️ Action ${action.type} failed: ${err.message.split('\n')[0]} (continuing)`);
+        }
       }
       const actionElapsed = Date.now() - actionStart;
 
@@ -66,7 +70,9 @@ async function executeAction(page, action) {
       break;
 
     case 'fill':
-      await page.locator(action.selector).first().fill(action.text || '');
+      await page.locator(action.selector).first().click();
+      await page.locator(action.selector).first().fill('');
+      await page.locator(action.selector).first().pressSequentially(action.text || '', { delay: 30 });
       break;
 
     case 'press':
