@@ -6,6 +6,7 @@
 import { chromium } from 'playwright';
 import { setTimeout } from 'timers/promises';
 import { mkdirSync } from 'fs';
+import { join, isAbsolute } from 'path';
 
 export async function record(script, audioDurations) {
   const { project, scenes } = script;
@@ -37,7 +38,7 @@ export async function record(script, audioDurations) {
       const actionStart = Date.now();
       for (const action of scene.actions) {
         try {
-          await executeAction(page, action);
+          await executeAction(page, action, project);
         } catch (err) {
           console.warn(`  ⚠️ Action ${action.type} failed: ${err.message.split('\n')[0]} (continuing)`);
         }
@@ -59,7 +60,7 @@ export async function record(script, audioDurations) {
   }
 }
 
-async function executeAction(page, action) {
+async function executeAction(page, action, project) {
   switch (action.type) {
     case 'goto':
       await page.goto(action.url, { waitUntil: 'networkidle', timeout: 30000 });
@@ -95,9 +96,14 @@ async function executeAction(page, action) {
       await setTimeout(action.ms || 1000);
       break;
 
-    case 'screenshot':
-      await page.screenshot({ path: `${action.name || 'screenshot'}.png` });
+    case 'screenshot': {
+      const filename = `${action.name || 'screenshot'}.png`;
+      const screenshotDir = `${project?.output || '.'}/screenshots`;
+      mkdirSync(screenshotDir, { recursive: true });
+      const outPath = isAbsolute(filename) ? filename : join(screenshotDir, filename);
+      await page.screenshot({ path: outPath });
       break;
+    }
 
     default:
       console.warn(`  ⚠️ Unknown action: ${action.type}`);

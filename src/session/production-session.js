@@ -4,7 +4,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs';
+import { mkdirSync, existsSync, readFileSync, writeFileSync, statSync } from 'fs';
 import { join, resolve } from 'path';
 import { narrate } from '../narrator.js';
 import { record } from '../recorder.js';
@@ -58,7 +58,7 @@ export class ProductionSession extends EventEmitter {
           scenes: this.script.scenes.length,
           totalNarrationDuration: this.state.audioDurations.reduce((a, b) => a + b, 0),
           fileSize: existsSync(this.state.outputPath)
-            ? require('fs').statSync(this.state.outputPath).size
+            ? statSync(this.state.outputPath).size
             : 0,
         },
       };

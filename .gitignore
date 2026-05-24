@@ -17,5 +17,8 @@ __pycache__/
 test_*.py
 *.log
 
+# ClawForge runtime artifacts
+.clawforge-checkpoints/
+
 # Local examples (private project data)
 examples/secondhand-pos-*.yaml

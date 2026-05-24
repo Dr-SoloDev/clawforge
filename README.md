@@ -1,133 +1,61 @@
-# ClawForge ⚡
+# ⚡ ClawForge
 
-**AI Agent Video Production Toolkit** — Turn scripts into polished demo videos, fully automated.
+> **Demo videos as code.** Write a YAML script, get a polished MP4 with browser recording and AI voiceover. Built for hackathons, product demos, and AI agents.
+
+[![npm version](https://img.shields.io/npm/v/clawforge.svg)](https://www.npmjs.com/package/clawforge)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
+[![MCP Compatible](https://img.shields.io/badge/MCP-compatible-blueviolet)](https://modelcontextprotocol.io)
 
 ```
-Script (YAML) → Playwright (Record) → edge-tts (Narrate) → ffmpeg (Render) → MP4
+Script (YAML) → Playwright (record) → edge-tts (narrate) → ffmpeg (render) → MP4
 ```
+
+---
 
 ## Why ClawForge?
 
-Creating demo videos for hackathons, product launches, and pitches is painful. You either screen-record manually (inconsistent, time-consuming) or hire someone (expensive, slow).
+You ship a feature. Your demo video is outdated. You re-record it. The UI changes again. You re-record again. **Stop.**
 
-**ClawForge automates the entire pipeline:**
-1. Write a simple YAML script describing your scenes and narration
-2. ClawForge records your app with Playwright, generates voiceover with TTS, and merges everything with ffmpeg
-3. Get a polished MP4 — zero manual work
+ClawForge treats demo videos like code — version-controlled, reproducible, rebuildable in one command. UI changes? Rerun the script. Done.
 
-Born from a real hackathon submission where the entire demo video was produced by an AI agent in one shot.
+- 🎬 **Scripted, not recorded** — YAML defines scenes, narration, and browser actions
+- 🎙️ **AI voiceover, 40+ languages** — Microsoft edge-tts neural voices, free
+- 🤖 **Agent-native** — SDK, MCP server, structured errors, event hooks
+- 🔁 **Reproducible** — same script, same video, every time
+- 💾 **Resumable** — checkpoint on failure, resume mid-pipeline
+- 🆓 **MIT, no API keys** — runs entirely on your machine
 
-## 🤖 Built for AI Agents
+---
 
-ClawForge v0.2+ provides a **programmatic SDK** designed specifically for AI agents like Claude Code, OpenClaw, Hermes, and custom agents. Agents can:
-
-- ✅ Generate videos programmatically via SDK
-- ✅ Track progress in real-time with events
-- ✅ Handle errors with structured error codes
-- ✅ Resume from checkpoints on failure
-- ✅ Validate scripts before execution
-- ✅ Integrate via MCP (Model Context Protocol)
-
-## Quick Start
-
-### CLI Usage
+## 60-second quickstart
 
 ```bash
-# Install
+# 1. Install
 npm install -g clawforge
-
-# Install dependencies
 pip install edge-tts
 npx playwright install chromium
 
-# Run with a script
-clawforge examples/demo-script.yaml
-
-# Validate script
-clawforge validate my-script.yaml
-
-# Check dependencies
+# 2. Verify
 clawforge check-deps
+
+# 3. Run the self-demo (no local server required)
+git clone https://github.com/Dr-SoloDev/clawforge.git && cd clawforge
+npm install
+node bin/clawforge.js examples/clawforge-self-demo.yaml
+
+# 4. Watch your video
+xdg-open output-hero/output.mp4   # Linux
+open output-hero/output.mp4       # macOS
 ```
 
-### SDK Usage (for AI Agents)
+---
 
-```javascript
-import { ClawForgeSDK } from 'clawforge';
-
-const forge = new ClawForgeSDK();
-
-// Track progress
-forge.on('stage:start', ({ stage }) => {
-  console.log(`Starting: ${stage}`);
-});
-
-forge.on('progress', ({ stage, percent }) => {
-  console.log(`${stage}: ${percent}%`);
-});
-
-// Produce video
-const result = await forge.produce({
-  project: {
-    name: 'My Demo',
-    url: 'http://localhost:3000',
-    output: './output',
-    viewport: { width: 1280, height: 720 }
-  },
-  voice: {
-    engine: 'edge-tts',
-    voice: 'en-US-AndrewMultilingualNeural'
-  },
-  scenes: [
-    {
-      name: 'intro',
-      narration: 'Welcome to my app demo',
-      actions: [
-        { type: 'goto', url: 'http://localhost:3000' },
-        { type: 'wait', ms: 2000 }
-      ]
-    }
-  ]
-});
-
-console.log('Video created:', result.outputPath);
-```
-
-### MCP Integration (for Claude Code)
-
-Add to your `.claude/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "clawforge": {
-      "command": "npx",
-      "args": ["clawforge-mcp"]
-    }
-  }
-}
-```
-
-Now Claude Code can use ClawForge tools:
-- `clawforge_produce_video` - Generate videos
-- `clawforge_validate_script` - Validate scripts
-- `clawforge_check_dependencies` - Check dependencies
-- `clawforge_dry_run` - Pre-flight checks
-
-## Requirements
-
-- **Node.js** >= 20
-- **ffmpeg** in PATH ([static build](https://johnvansickle.com/ffmpeg/))
-- **edge-tts** (Python): `pip install edge-tts`
-- **Playwright** (auto-installed with npm)
-
-## Script Format
-
-ClawForge uses YAML scripts to define your video:
+## What a script looks like
 
 ```yaml
 project:
-  name: "My App Demo"
+  name: "My SaaS Demo"
   url: "http://localhost:3000"
   output: "./output"
   viewport: { width: 1280, height: 720 }
@@ -138,100 +66,173 @@ voice:
   rate: "-5%"
 
 scenes:
-  - name: "opening"
-    narration: "Welcome to My App — the fastest way to do X."
+  - name: "intro"
+    narration: "Welcome to Acme — the fastest way to ship."
     actions:
       - { type: "goto", url: "http://localhost:3000" }
       - { type: "wait", ms: 3000 }
-      - { type: "scroll", y: 400 }
 
-  - name: "demo"
-    narration: "Let me show you how it works."
+  - name: "signup"
+    narration: "Sign up takes ten seconds."
     actions:
       - { type: "click", selector: "text=Get Started" }
-      - { type: "fill", selector: "textarea", text: "Hello World" }
-      - { type: "click", selector: "text=Submit" }
-      - { type: "wait", ms: 5000 }
+      - { type: "fill", selector: "input[type=email]", text: "demo@acme.dev" }
+      - { type: "press", selector: "input[type=email]", key: "Enter" }
+      - { type: "wait", ms: 4000 }
 
-  - name: "closing"
-    narration: "Thanks for watching. Try it today!"
+  - name: "outro"
+    narration: "That's it. Try Acme today."
     actions:
       - { type: "scroll", y: 0 }
-      - { type: "wait", ms: 3000 }
+      - { type: "wait", ms: 2000 }
 ```
 
-## Actions
+That's the whole demo. Run `clawforge my-demo.yaml` and you get an MP4.
+
+---
+
+## Use cases
+
+| You are... | ClawForge gives you... |
+|---|---|
+| 🚀 Hackathon submitter | A polished demo video before the deadline, rebuildable until last minute |
+| 💼 SaaS founder | Landing page demos that update with your UI, no re-recording |
+| 📚 DevRel / docs author | Tutorial videos checked into the repo alongside code |
+| 🤖 AI agent developer | A `produce_video` tool your agent can call via MCP |
+| 🧪 QA engineer | Visual regression videos generated in CI per PR |
+
+---
+
+## Actions reference
 
 | Action | Parameters | Description |
-|--------|-----------|-------------|
-| `goto` | `url` | Navigate to URL |
-| `click` | `selector` | Click an element |
-| `fill` | `selector`, `text` | Type text into input |
-| `press` | `selector`, `key` | Press a key (e.g., `Control+Enter`) |
-| `scroll` | `y` (absolute) or `dy` (relative) | Scroll the page |
-| `wait` | `ms` | Wait for milliseconds |
-| `screenshot` | `name` | Take a screenshot |
+|---|---|---|
+| `goto` | `url` | Navigate (waits for networkidle, 30s timeout) |
+| `click` | `selector` | Click first matching element |
+| `fill` | `selector`, `text` | Type with `pressSequentially` (React-safe, 30ms/key) |
+| `press` | `selector?`, `key` | Press a key (e.g. `Control+Enter`) |
+| `scroll` | `y` (absolute) or `dy` (relative) | Smooth scroll |
+| `wait` | `ms` | Pause |
+| `screenshot` | `name?` | Save PNG to `<output>/screenshots/` |
 
-## Documentation
+Selectors are [Playwright locators](https://playwright.dev/docs/locators) — CSS, text, role, testid, etc.
 
-- **[SDK Documentation](docs/SDK.md)** - Complete SDK guide for AI agents
-- **[Examples](examples/)** - Code examples and usage patterns
-- **[API Reference](src/types/index.d.ts)** - TypeScript type definitions
+---
 
-## Architecture
+## CLI commands
 
-```
-┌─────────────────────────────────────────────┐
-│         ClawForge SDK (v0.2+)                │
-│    Programmatic API for AI Agents            │
-├─────────────────────────────────────────────┤
-│              ClawForge CLI                   │
-│         (bin/clawforge.js)                   │
-├─────────────────────────────────────────────┤
-│           Script Loader                      │
-│     (YAML/JSON → Scene Objects)              │
-├──────────┬──────────┬───────────────────────┤
-│ Recorder │ Narrator │     Composer          │
-│Playwright│ edge-tts │      ffmpeg           │
-│ → WebM   │  → MP3   │  WebM+MP3 → MP4      │
-└──────────┴──────────┴───────────────────────┘
+```bash
+clawforge <script.yaml>              # Produce a video
+clawforge validate <script.yaml>     # Validate without running
+clawforge check-deps                 # Check all dependencies
+clawforge resume <checkpoint.json>   # Resume from last checkpoint
+
+# Flags
+-o, --output <dir>     Override output directory
+-v, --verbose          Verbose logging
+--skip-deps            Skip dependency check
 ```
 
-## Features
+---
 
-### v0.2.0 (AI Agent SDK)
+## Use it as a library
 
-- ✅ **Programmatic SDK** - Use ClawForge from code
-- ✅ **Event System** - Real-time progress tracking
-- ✅ **Error Handling** - Structured errors with recovery info
-- ✅ **Retry Policy** - Configurable retry logic
-- ✅ **Checkpointing** - Resume from failures
-- ✅ **Validation** - Pre-flight script validation
-- ✅ **MCP Server** - Claude Code integration
-- ✅ **TypeScript Types** - Full type safety
+```js
+import { ClawForgeSDK } from 'clawforge';
 
-### v0.1.0 (CLI)
+const forge = new ClawForgeSDK({ verbose: true });
 
-- ✅ YAML script format
-- ✅ Playwright recording engine
-- ✅ edge-tts narrator
-- ✅ ffmpeg composer
+forge.on('stage:start', ({ stage }) => console.log(`▶  ${stage}`));
+forge.on('stage:complete', ({ stage }) => console.log(`✓  ${stage}`));
+forge.on('scene:complete', ({ scene }) => console.log(`  ✅ ${scene}`));
 
-### Roadmap
+const result = await forge.produce('./demo.yaml');
+console.log(result.outputPath); // ./output/output.mp4
+```
 
-- [ ] Voicebox integration (voice cloning)
-- [ ] Scene preview mode
-- [ ] Subtitle generation (SRT)
-- [ ] Multi-language support
-- [ ] Template library
-- [ ] Cloud rendering
+Full SDK docs: [docs/SDK.md](docs/SDK.md)
 
-## Origin Story
+---
 
-Built by [Dr.solodev](https://github.com/Dr-SoloDev) and Turbo ⚡ during a Solana hackathon. The entire KadiRail AI demo video was produced autonomously by an AI agent — Playwright recorded the browser, edge-tts generated English voiceover, and ffmpeg merged everything into a polished MP4. Zero human intervention.
+## Use it from Claude Code (MCP)
 
-We thought: **if an AI agent can make a demo video, everyone should be able to.**
+Add to `.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "clawforge": { "command": "npx", "args": ["clawforge-mcp"] }
+  }
+}
+```
+
+Now Claude can call:
+- `clawforge_produce_video` — generate a video from a script
+- `clawforge_validate_script` — validate without executing
+- `clawforge_check_dependencies` — verify ffmpeg, edge-tts, Playwright
+- `clawforge_dry_run` — pre-flight check before production
+
+---
+
+## How it compares
+
+|   | ClawForge | Loom | Synthesia | OBS | Playwright codegen |
+|---|---|---|---|---|---|
+| Script-as-code | ✅ | ❌ | ⚠️ template | ❌ | ⚠️ partial |
+| Reproducible from source | ✅ | ❌ | ⚠️ | ❌ | ⚠️ |
+| AI voiceover included | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Real browser interaction | ✅ | ✅ (manual) | ❌ | ✅ | ✅ |
+| Agent / MCP support | ✅ | ❌ | ❌ | ❌ | ❌ |
+| 40+ languages free | ✅ | — | 💰 | — | — |
+| Cost | Free, MIT | Freemium | 💰💰💰 | Free | Free |
+
+---
+
+## Requirements
+
+- Node.js ≥ 20
+- Python 3 (for `edge-tts`)
+- `ffmpeg` & `ffprobe` in PATH
+- Chromium (installed via `npx playwright install chromium`)
+
+Run `clawforge check-deps` to verify your environment.
+
+---
+
+## Reliability features
+
+- **Retry policy** — exponential / linear / constant backoff for network and selector errors
+- **Checkpointing** — JSON checkpoints written to `./.clawforge-checkpoints/` after each stage
+- **Resume** — pick up from the last checkpoint with `clawforge resume <checkpoint.json>`
+- **Structured errors** — `ClawForgeError` with codes: `NETWORK_TIMEOUT`, `PLAYWRIGHT_ERROR`, `SELECTOR_NOT_FOUND`, `TTS_ERROR`, `NAVIGATION_FAILED`, `FFMPEG_ERROR`
+
+---
+
+## Roadmap
+
+- [ ] Burn-in subtitles (SRT generation)
+- [ ] Background music & ducking
+- [ ] Webcam overlay (picture-in-picture)
+- [ ] Headed mode option
+- [ ] Multi-browser support (Firefox/WebKit)
+- [ ] Voice cloning integration
+- [ ] Cloud rendering for CI
+- [ ] Template gallery
+
+[See open issues →](https://github.com/Dr-SoloDev/clawforge/issues) · [Contribute](CONTRIBUTING.md)
+
+---
+
+## Origin
+
+Born during a Solana hackathon. The KadiRail demo video was produced end-to-end by an AI agent — Playwright recorded the browser, edge-tts narrated, ffmpeg merged. Zero human in the loop.
+
+> If an AI agent can make a demo video, anyone should be able to.
+
+Built by [Dr.solodev](https://github.com/Dr-SoloDev) ⚡
+
+---
 
 ## License
 
-MIT
+[MIT](LICENSE)

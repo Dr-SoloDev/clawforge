@@ -5,6 +5,7 @@
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { ClawForgeSDK } from '../sdk/clawforge-sdk.js';
 import { ClawForgeError } from '../errors/clawforge-errors.js';
 
@@ -13,7 +14,7 @@ export class ClawForgeMCPServer {
     this.server = new Server(
       {
         name: 'clawforge',
-        version: '0.2.0',
+        version: '0.3.0',
       },
       {
         capabilities: {
@@ -26,7 +27,7 @@ export class ClawForgeMCPServer {
   }
 
   setupTools() {
-    this.server.setRequestHandler('tools/list', async () => ({
+    this.server.setRequestHandler(ListToolsRequestSchema, async () => ({
       tools: [
         {
           name: 'clawforge_produce_video',
@@ -169,7 +170,7 @@ export class ClawForgeMCPServer {
       ],
     }));
 
-    this.server.setRequestHandler('tools/call', async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
 
       try {

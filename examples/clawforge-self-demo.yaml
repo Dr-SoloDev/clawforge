@@ -1,0 +1,52 @@
+# ClawForge Self-Demo
+# A meta demo: ClawForge demonstrating itself by navigating its own GitHub repo.
+# Self-contained — no local server required. Run from anywhere with internet.
+
+project:
+  name: "ClawForge Demo"
+  url: "https://github.com/Dr-SoloDev/clawforge"
+  output: "./output-hero"
+  viewport:
+    width: 1280
+    height: 720
+
+voice:
+  engine: "edge-tts"
+  voice: "en-US-AndrewMultilingualNeural"
+  rate: "-5%"
+
+scenes:
+  - name: "intro"
+    narration: >
+      Meet ClawForge. Demo videos as code.
+      You write a YAML script. ClawForge gives you a polished MP4
+      with browser recording and AI voiceover.
+    actions:
+      - { type: "goto", url: "https://github.com/Dr-SoloDev/clawforge" }
+      - { type: "wait", ms: 4000 }
+
+  - name: "the-pipeline"
+    narration: >
+      Under the hood: Playwright drives a real Chromium browser.
+      Edge TTS generates neural voice in over forty languages.
+      FFmpeg merges everything into a single MP4. All open source. All free.
+    actions:
+      - { type: "scroll", dy: 600 }
+      - { type: "wait", ms: 5000 }
+
+  - name: "agent-native"
+    narration: >
+      ClawForge ships with an SDK, an MCP server, and a CLI.
+      Your AI agent can produce demo videos by calling a single tool.
+      Or run it directly from the command line.
+    actions:
+      - { type: "scroll", dy: 600 }
+      - { type: "wait", ms: 5000 }
+
+  - name: "outro"
+    narration: >
+      Demo videos as code. Reproducible. Multilingual. Agent-ready.
+      Star the repo. Try it today. Thanks for watching.
+    actions:
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 4000 }

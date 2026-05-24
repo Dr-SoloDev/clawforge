@@ -2,6 +2,25 @@
 
 All notable changes to ClawForge will be documented in this file.
 
+## [0.3.0] - 2026-05-24
+
+### Added
+- **Self-demo example** (`examples/clawforge-self-demo.yaml`) — runs without a local server, navigates the public GitHub repo
+- **Smoke test suite** (`test/smoke.test.js`) — 7 tests covering SDK instantiation, script loading, validation, dry-run, dependency check
+- **GitHub Actions CI** (`.github/workflows/ci.yml`) — Node 20.x + 22.x matrix, smoke tests, MCP server smoke test
+- **Public-facing README** — full rewrite focused on use cases (hackathons, SaaS demos, DevRel, AI agents, QA)
+
+### Fixed
+- **`production-session.js`** — replaced CommonJS `require('fs')` with ESM `import { statSync }` (would throw at runtime in `run()`)
+- **MCP server** — `setRequestHandler` now uses `ListToolsRequestSchema` / `CallToolRequestSchema` schema objects instead of string method names (server now starts and responds to `tools/list` correctly)
+- **`screenshot` action** — saves to `<project.output>/screenshots/` instead of cwd
+- **React form fills** — `fill` action uses `pressSequentially` with 30ms delay to trigger React `onChange` handlers
+- **edge-tts `--rate` arg** — uses `--rate=VALUE` syntax (previous form silently dropped on some systems)
+
+### Changed
+- **Package description** — refocused on "demo videos as code" positioning for public discovery
+- **Version bump** — 0.2.0 → 0.3.0
+
 ## [0.2.0] - 2026-05-23
 
 ### Added - AI Agent SDK
