@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Background: deep navy → violet radial -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%"   stop-color="#1a1438"/>
+      <stop offset="55%"  stop-color="#0e0a24"/>
+      <stop offset="100%" stop-color="#06030f"/>
+    </radialGradient>
+
+    <!-- Chrome / silver gradient for prongs -->
+    <linearGradient id="chrome" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#f4f7fb"/>
+      <stop offset="22%"  stop-color="#c9d2dc"/>
+      <stop offset="50%"  stop-color="#7d8794"/>
+      <stop offset="78%"  stop-color="#c9d2dc"/>
+      <stop offset="100%" stop-color="#5a6573"/>
+    </linearGradient>
+
+    <!-- Edge highlight -->
+    <linearGradient id="edge" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="60%"  stop-color="#ffffff" stop-opacity="0.0"/>
+    </linearGradient>
+
+    <!-- Forge flame: amber → white-hot core -->
+    <radialGradient id="flame" cx="50%" cy="55%" r="55%">
+      <stop offset="0%"   stop-color="#fff6c8"/>
+      <stop offset="25%"  stop-color="#ffd166"/>
+      <stop offset="55%"  stop-color="#ff8a1f"/>
+      <stop offset="85%"  stop-color="#d2410a"/>
+      <stop offset="100%" stop-color="#5a1102" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="emberGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#ffb347" stop-opacity="0.55"/>
+      <stop offset="55%"  stop-color="#ff7a18" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ff7a18" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Soft glow filter for flame -->
+    <filter id="softBloom" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="emberBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.2"/>
+    </filter>
+
+    <!-- Single prong shape: a tapered talon curving inward.
+         Drawn pointing left, tip at right. We rotate copies around center. -->
+    <g id="prong">
+      <!-- main body: thick base, sharp inward-curling tip -->
+      <path d="
+        M -340,-46
+        C -250,-78  -150,-70  -70,-40
+        C -10,-18   30,18    44,58
+        C 24,40    -10,18   -56,8
+        C -130,-2  -220,-2  -300,28
+        C -330,38  -342,28  -340,-46
+        Z"
+        fill="url(#chrome)"
+        stroke="#0b0820" stroke-width="3" stroke-linejoin="round"/>
+      <!-- top edge highlight -->
+      <path d="
+        M -332,-42
+        C -244,-72  -150,-64  -78,-36
+        C -30,-18    8,8    28,40"
+        fill="none" stroke="url(#edge)" stroke-width="3" stroke-linecap="round"/>
+      <!-- inner bevel groove -->
+      <path d="
+        M -300,-10
+        C -210,-30 -110,-26  -50,-6"
+        fill="none" stroke="#2a3340" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+      <!-- rivet at base -->
+      <circle cx="-300" cy="-8" r="9" fill="#2a3340" stroke="#0b0820" stroke-width="2"/>
+      <circle cx="-302" cy="-11" r="3" fill="#dfe6ef"/>
+    </g>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bgGrad)"/>
+
+  <!-- Subtle vignette grid (very faint) -->
+  <g opacity="0.05" stroke="#7aa2ff" stroke-width="1">
+    <circle cx="512" cy="512" r="380" fill="none"/>
+    <circle cx="512" cy="512" r="300" fill="none"/>
+  </g>
+
+  <!-- Outer ember glow halo -->
+  <circle cx="512" cy="512" r="360" fill="url(#emberGlow)"/>
+
+  <!-- Forge flame core (behind prongs, shifted slightly to "left opening" of the C) -->
+  <g filter="url(#softBloom)">
+    <ellipse cx="512" cy="520" rx="150" ry="180" fill="url(#flame)"/>
+    <ellipse cx="512" cy="500" rx="70" ry="95" fill="#fff2b0" opacity="0.85"/>
+  </g>
+
+  <!-- The C-shaped claw: 3 prongs arranged so the gap (mouth of C) faces RIGHT.
+       Center of rotation is (512,512). Prong tip points toward center.
+       We position prongs at top, middle-left, bottom — leaving the right side open. -->
+  <g transform="translate(512 512)">
+    <!-- top prong (curls down-right toward center) -->
+    <g transform="rotate(-58)"><use href="#prong"/></g>
+    <!-- middle-left prong (points right toward center) -->
+    <g transform="rotate(180)"><use href="#prong"/></g>
+    <!-- bottom prong (curls up-right toward center) -->
+    <g transform="rotate(58)"><use href="#prong"/></g>
+  </g>
+
+  <!-- Foreground sparks / embers -->
+  <g filter="url(#emberBlur)">
+    <circle cx="612" cy="430" r="4"  fill="#ffd27a" opacity="0.95"/>
+    <circle cx="640" cy="500" r="3"  fill="#ffb347" opacity="0.9"/>
+    <circle cx="660" cy="560" r="2.5" fill="#ff8a1f" opacity="0.85"/>
+    <circle cx="600" cy="600" r="3.5" fill="#ffd27a" opacity="0.9"/>
+    <circle cx="690" cy="470" r="2"  fill="#fff1c2" opacity="0.95"/>
+    <circle cx="720" cy="520" r="1.6" fill="#ffd27a" opacity="0.8"/>
+    <circle cx="558" cy="380" r="2.2" fill="#ffb347" opacity="0.85"/>
+    <circle cx="555" cy="650" r="2.8" fill="#ff8a1f" opacity="0.9"/>
+    <circle cx="450" cy="440" r="1.8" fill="#ffd27a" opacity="0.7"/>
+    <circle cx="470" cy="590" r="1.6" fill="#ffb347" opacity="0.7"/>
+  </g>
+
+  <!-- Tiny hot core dot -->
+  <circle cx="512" cy="512" r="10" fill="#fff6c8" opacity="0.95" filter="url(#softBloom)"/>
+</svg>

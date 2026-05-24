@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 640" width="1920" height="640">
+  <defs>
+    <!-- Background: deep navy-violet on left, warmer dark on right -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#06030f"/>
+      <stop offset="35%"  stop-color="#0e0a24"/>
+      <stop offset="55%"  stop-color="#140d2c"/>
+      <stop offset="80%"  stop-color="#1a1230"/>
+      <stop offset="100%" stop-color="#221428"/>
+    </linearGradient>
+
+    <!-- Vertical falloff to keep top quieter for the wordmark -->
+    <linearGradient id="topVignette" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#000000" stop-opacity="0.55"/>
+      <stop offset="35%"  stop-color="#000000" stop-opacity="0.0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.0"/>
+    </linearGradient>
+
+    <!-- Chrome / silver gradient for prongs -->
+    <linearGradient id="chrome" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#f4f7fb"/>
+      <stop offset="22%"  stop-color="#c9d2dc"/>
+      <stop offset="50%"  stop-color="#7d8794"/>
+      <stop offset="78%"  stop-color="#c9d2dc"/>
+      <stop offset="100%" stop-color="#5a6573"/>
+    </linearGradient>
+
+    <linearGradient id="edge" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="60%"  stop-color="#ffffff" stop-opacity="0.0"/>
+    </linearGradient>
+
+    <!-- Forge flame: amber → white-hot core -->
+    <radialGradient id="flame" cx="50%" cy="55%" r="55%">
+      <stop offset="0%"   stop-color="#fff6c8"/>
+      <stop offset="25%"  stop-color="#ffd166"/>
+      <stop offset="55%"  stop-color="#ff8a1f"/>
+      <stop offset="85%"  stop-color="#d2410a"/>
+      <stop offset="100%" stop-color="#5a1102" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="emberGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#ffb347" stop-opacity="0.55"/>
+      <stop offset="55%"  stop-color="#ff7a18" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ff7a18" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Right-side amber halo behind play button -->
+    <radialGradient id="playHalo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#ffcb6b" stop-opacity="0.55"/>
+      <stop offset="45%"  stop-color="#ff8a1f" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#ff7a18" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Bright forge ring gradient for the play button rim -->
+    <linearGradient id="forgeRim" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#fff6c8"/>
+      <stop offset="35%"  stop-color="#ffd166"/>
+      <stop offset="70%"  stop-color="#ff8a1f"/>
+      <stop offset="100%" stop-color="#b6360a"/>
+    </linearGradient>
+
+    <linearGradient id="forgeFill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#ffe6a3"/>
+      <stop offset="50%"  stop-color="#ffb347"/>
+      <stop offset="100%" stop-color="#ff7a18"/>
+    </linearGradient>
+
+    <!-- Code-stream gradient for middle: cool indigo → warm amber -->
+    <linearGradient id="streamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#7aa2ff" stop-opacity="0"/>
+      <stop offset="20%"  stop-color="#7aa2ff" stop-opacity="0.55"/>
+      <stop offset="55%"  stop-color="#c9b6ff" stop-opacity="0.7"/>
+      <stop offset="85%"  stop-color="#ffb347" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#ffd166" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Soft glow filters -->
+    <filter id="softBloom" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="bigBloom" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="emberBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.6"/>
+    </filter>
+
+    <filter id="codeGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Prong (claw talon) — same geometry as logo, used at scale -->
+    <g id="prong">
+      <path d="
+        M -340,-46
+        C -250,-78  -150,-70  -70,-40
+        C -10,-18   30,18    44,58
+        C 24,40    -10,18   -56,8
+        C -130,-2  -220,-2  -300,28
+        C -330,38  -342,28  -340,-46
+        Z"
+        fill="url(#chrome)"
+        stroke="#0b0820" stroke-width="3" stroke-linejoin="round"/>
+      <path d="
+        M -332,-42
+        C -244,-72  -150,-64  -78,-36
+        C -30,-18    8,8    28,40"
+        fill="none" stroke="url(#edge)" stroke-width="3" stroke-linecap="round"/>
+      <path d="
+        M -300,-10
+        C -210,-30 -110,-26  -50,-6"
+        fill="none" stroke="#2a3340" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+      <circle cx="-300" cy="-8" r="9" fill="#2a3340" stroke="#0b0820" stroke-width="2"/>
+      <circle cx="-302" cy="-11" r="3" fill="#dfe6ef"/>
+    </g>
+
+    <!-- Single curved light streak used in middle band -->
+    <path id="streakPath" d="M 0,0 C 200,-10 420,-30 640,-20"/>
+  </defs>
+
+  <!-- ============ BASE ============ -->
+  <rect width="1920" height="640" fill="url(#bgGrad)"/>
+
+  <!-- Faint scanline / grid mood -->
+  <g opacity="0.05" stroke="#7aa2ff" stroke-width="1">
+    <line x1="0" y1="160" x2="1920" y2="160"/>
+    <line x1="0" y1="320" x2="1920" y2="320"/>
+    <line x1="0" y1="480" x2="1920" y2="480"/>
+  </g>
+
+  <!-- ============ LEFT THIRD: CLAW + FLAME ============ -->
+  <!-- Outer ember halo behind claw -->
+  <circle cx="380" cy="360" r="280" fill="url(#emberGlow)"/>
+
+  <!-- Forge flame core (behind prongs, sits in the C-mouth) -->
+  <g filter="url(#bigBloom)" transform="translate(380 360)">
+    <ellipse cx="0" cy="8" rx="120" ry="150" fill="url(#flame)"/>
+    <ellipse cx="0" cy="-8" rx="55" ry="80" fill="#fff2b0" opacity="0.9"/>
+  </g>
+
+  <!-- 3-prong C-claw (mouth opens RIGHT toward the flame and code) -->
+  <g transform="translate(380 360) scale(0.62)">
+    <g transform="rotate(-58)"><use href="#prong"/></g>
+    <g transform="rotate(180)"><use href="#prong"/></g>
+    <g transform="rotate(58)"><use href="#prong"/></g>
+  </g>
+
+  <!-- Hot core dot inside the claw -->
+  <circle cx="380" cy="360" r="7" fill="#fff6c8" opacity="0.95" filter="url(#softBloom)"/>
+
+  <!-- ============ MIDDLE THIRD: CODE PARTICLES → LIGHT STREAKS ============ -->
+
+  <!-- Soft connecting light bridge from flame into stream -->
+  <g filter="url(#bigBloom)" opacity="0.55">
+    <ellipse cx="640" cy="360" rx="220" ry="40" fill="url(#streamGrad)"/>
+  </g>
+
+  <!-- YAML / syntax fragments — quieter in upper area, denser mid-band -->
+  <g font-family="ui-monospace, 'JetBrains Mono', Menlo, monospace" filter="url(#codeGlow)">
+    <!-- left cluster: cooler tones, fragments still legible-ish -->
+    <text x="560" y="295" font-size="22" fill="#9fb6ff" opacity="0.85">name:</text>
+    <text x="560" y="395" font-size="22" fill="#c9b6ff" opacity="0.8">- step:</text>
+    <text x="560" y="455" font-size="20" fill="#7aa2ff" opacity="0.7">click:</text>
+
+    <text x="660" y="335" font-size="34" fill="#dbe7ff" opacity="0.9">{</text>
+    <text x="700" y="425" font-size="34" fill="#dbe7ff" opacity="0.85">}</text>
+
+    <text x="720" y="300" font-size="20" fill="#a8c0ff" opacity="0.7">url:</text>
+    <text x="740" y="380" font-size="22" fill="#c9b6ff" opacity="0.85">:</text>
+
+    <!-- middle cluster: blending warmer -->
+    <text x="800" y="320" font-size="28" fill="#e6d6ff" opacity="0.9">{</text>
+    <text x="840" y="370" font-size="22" fill="#ffd9a8" opacity="0.85">- record</text>
+    <text x="820" y="430" font-size="20" fill="#ffc98a" opacity="0.75">wait:</text>
+
+    <text x="920" y="305" font-size="20" fill="#ffd9a8" opacity="0.7">type:</text>
+    <text x="950" y="365" font-size="26" fill="#ffd166" opacity="0.9">}</text>
+    <text x="940" y="425" font-size="22" fill="#ffb347" opacity="0.8">:</text>
+
+    <!-- right cluster: dissolving, mostly amber/sparks -->
+    <text x="1040" y="330" font-size="22" fill="#ffd166" opacity="0.85">-</text>
+    <text x="1075" y="360" font-size="20" fill="#ffb347" opacity="0.75">:</text>
+    <text x="1105" y="395" font-size="18" fill="#ffd166" opacity="0.7">-</text>
+    <text x="1140" y="370" font-size="16" fill="#ffd9a8" opacity="0.6">:</text>
+    <text x="1180" y="355" font-size="14" fill="#ffd166" opacity="0.55">-</text>
+    <text x="1215" y="380" font-size="12" fill="#ffd9a8" opacity="0.45">:</text>
+  </g>
+
+  <!-- Light streaks flowing rightward -->
+  <g fill="none" stroke="url(#streamGrad)" stroke-linecap="round" filter="url(#softBloom)">
+    <path d="M 620,300 C 800,290 1000,310 1260,300" stroke-width="2.5" opacity="0.85"/>
+    <path d="M 600,360 C 820,350 1040,370 1280,355" stroke-width="3" opacity="0.95"/>
+    <path d="M 640,420 C 840,415 1060,430 1260,415" stroke-width="2" opacity="0.8"/>
+    <path d="M 680,260 C 880,255 1080,275 1240,265" stroke-width="1.5" opacity="0.65"/>
+    <path d="M 660,470 C 860,470 1060,480 1240,470" stroke-width="1.5" opacity="0.6"/>
+  </g>
+
+  <!-- Particle dots accelerating right -->
+  <g filter="url(#emberBlur)">
+    <circle cx="700"  cy="305" r="2.0" fill="#9fb6ff" opacity="0.85"/>
+    <circle cx="780"  cy="345" r="2.2" fill="#c9b6ff" opacity="0.85"/>
+    <circle cx="860"  cy="320" r="2.4" fill="#dbe7ff" opacity="0.9"/>
+    <circle cx="900"  cy="395" r="2.0" fill="#ffd9a8" opacity="0.85"/>
+    <circle cx="970"  cy="350" r="2.6" fill="#ffd166" opacity="0.9"/>
+    <circle cx="1040" cy="335" r="2.4" fill="#ffb347" opacity="0.9"/>
+    <circle cx="1100" cy="370" r="2.2" fill="#ffd166" opacity="0.85"/>
+    <circle cx="1160" cy="355" r="1.8" fill="#ffd9a8" opacity="0.8"/>
+    <circle cx="1210" cy="370" r="1.6" fill="#ffb347" opacity="0.75"/>
+    <circle cx="1250" cy="362" r="1.4" fill="#ffd166" opacity="0.7"/>
+  </g>
+
+  <!-- ============ RIGHT THIRD: FORGED PLAY BUTTON ============ -->
+  <!-- Big amber halo behind play button -->
+  <circle cx="1600" cy="360" r="280" fill="url(#playHalo)"/>
+
+  <!-- Hot under-glow ring -->
+  <circle cx="1600" cy="360" r="160" fill="none" stroke="#ff7a18" stroke-width="2" opacity="0.35" filter="url(#bigBloom)"/>
+
+  <!-- Outer forged ring (looks like glowing hot metal) -->
+  <g filter="url(#softBloom)">
+    <circle cx="1600" cy="360" r="140" fill="none" stroke="url(#forgeRim)" stroke-width="10"/>
+    <!-- inner highlight ring for "forged" sheen -->
+    <circle cx="1600" cy="360" r="140" fill="none" stroke="#fff6c8" stroke-width="2" opacity="0.55"
+            stroke-dasharray="6 14" transform="rotate(-20 1600 360)"/>
+  </g>
+
+  <!-- Play triangle (forged amber fill) -->
+  <g filter="url(#softBloom)">
+    <path d="M 1560,290 L 1560,430 L 1675,360 Z"
+          fill="url(#forgeFill)"
+          stroke="#fff6c8" stroke-width="2" stroke-linejoin="round" opacity="0.98"/>
+    <!-- inner hot core on the triangle -->
+    <path d="M 1572,310 L 1572,410 L 1655,360 Z"
+          fill="#fff2b0" opacity="0.55"/>
+  </g>
+
+  <!-- Sparks fed from the flame still burning around the play button -->
+  <g filter="url(#emberBlur)">
+    <circle cx="1480" cy="280" r="2.4" fill="#ffd27a" opacity="0.9"/>
+    <circle cx="1510" cy="450" r="2.0" fill="#ffb347" opacity="0.85"/>
+    <circle cx="1700" cy="270" r="2.2" fill="#ffd27a" opacity="0.85"/>
+    <circle cx="1730" cy="430" r="2.6" fill="#ff8a1f" opacity="0.9"/>
+    <circle cx="1620" cy="220" r="1.8" fill="#fff1c2" opacity="0.9"/>
+    <circle cx="1580" cy="500" r="2.2" fill="#ffd27a" opacity="0.85"/>
+    <circle cx="1770" cy="360" r="1.6" fill="#ffb347" opacity="0.7"/>
+    <circle cx="1450" cy="370" r="1.6" fill="#ffd27a" opacity="0.75"/>
+  </g>
+
+  <!-- ============ AMBIENT EMBERS (full width) ============ -->
+  <g filter="url(#emberBlur)" opacity="0.9">
+    <circle cx="120"  cy="180" r="1.5" fill="#ffd27a" opacity="0.55"/>
+    <circle cx="250"  cy="500" r="1.8" fill="#ffb347" opacity="0.6"/>
+    <circle cx="430"  cy="540" r="1.6" fill="#ffd27a" opacity="0.5"/>
+    <circle cx="540"  cy="200" r="1.4" fill="#ffd27a" opacity="0.45"/>
+    <circle cx="900"  cy="540" r="1.6" fill="#ffb347" opacity="0.55"/>
+    <circle cx="1100" cy="190" r="1.5" fill="#ffd27a" opacity="0.5"/>
+    <circle cx="1320" cy="540" r="1.8" fill="#ffb347" opacity="0.55"/>
+    <circle cx="1450" cy="190" r="1.4" fill="#ffd27a" opacity="0.5"/>
+    <circle cx="1820" cy="180" r="1.6" fill="#ffd27a" opacity="0.55"/>
+    <circle cx="1860" cy="500" r="1.8" fill="#ffb347" opacity="0.55"/>
+  </g>
+
+  <!-- Top vignette to keep wordmark area calm -->
+  <rect width="1920" height="640" fill="url(#topVignette)"/>
+
+  <!-- Subtle bottom vignette for cinematic letterbox feel -->
+  <rect x="0" y="560" width="1920" height="80" fill="#000" opacity="0.35"/>
+  <rect x="0" y="0"   width="1920" height="40"  fill="#000" opacity="0.25"/>
+</svg>

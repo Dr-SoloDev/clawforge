@@ -1,11 +1,20 @@
-# ⚡ ClawForge
+<p align="center">
+  <img src="assets/hero-banner.png" alt="ClawForge — Demo videos as code" width="100%" />
+</p>
+
+<h1 align="center">
+  <img src="assets/logo.png" alt="ClawForge" width="120" /><br/>
+  ⚡ ClawForge
+</h1>
 
 > **Demo videos as code.** Write a YAML script, get a polished MP4 with browser recording and AI voiceover. Built for hackathons, product demos, and AI agents.
 
-[![npm version](https://img.shields.io/npm/v/clawforge.svg)](https://www.npmjs.com/package/clawforge)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
-[![MCP Compatible](https://img.shields.io/badge/MCP-compatible-blueviolet)](https://modelcontextprotocol.io)
+<p align="center">
+  <a href="https://www.npmjs.com/package/clawforge"><img src="https://img.shields.io/npm/v/clawforge.svg" alt="npm version" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen" alt="Node" /></a>
+  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-compatible-blueviolet" alt="MCP Compatible" /></a>
+</p>
 
 ```
 Script (YAML) → Playwright (record) → edge-tts (narrate) → ffmpeg (render) → MP4
@@ -242,7 +251,19 @@ Born during a Solana hackathon. The KadiRail demo video was produced end-to-end 
 
 > If an AI agent can make a demo video, anyone should be able to.
 
-Built by [Dr.solodev](https://github.com/Dr-SoloDev) ⚡
+Built by **[Dr.solodev](https://github.com/Dr-SoloDev)** ⚡ — full-cycle developer (Solana / DeFi / AI agents) based in Thailand 🇹🇭
+
+## Connect
+
+<p align="left">
+  <a href="https://github.com/Dr-SoloDev"><img src="https://img.shields.io/badge/GitHub-Dr--SoloDev-181717?logo=github&logoColor=white" alt="GitHub" /></a>
+  <a href="https://x.com/AChaisirum"><img src="https://img.shields.io/badge/X-@AChaisirum-000000?logo=x&logoColor=white" alt="X / Twitter" /></a>
+  <a href="https://t.me/contact_Drsolodev"><img src="https://img.shields.io/badge/Telegram-contact__Drsolodev-2CA5E0?logo=telegram&logoColor=white" alt="Telegram" /></a>
+  <a href="https://discord.gg/APfu9urd"><img src="https://img.shields.io/badge/Discord-Join_Server-5865F2?logo=discord&logoColor=white" alt="Discord" /></a>
+  <a href="https://www.facebook.com/share/1GqRRgaDb9/"><img src="https://img.shields.io/badge/Facebook-Page-1877F2?logo=facebook&logoColor=white" alt="Facebook" /></a>
+</p>
+
+Open to collaborations, hackathon partnerships, and DeFi / AI agent projects.
 
 ---
 
