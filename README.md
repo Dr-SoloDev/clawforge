@@ -174,6 +174,19 @@ Now Claude can call:
 
 ---
 
+## Use it with AI coding agents (Skills)
+
+For agents that support the Skills convention (Hermes Agent, Claude Skills), this repo ships a pre-packaged skill at [`skills/clawforge/`](skills/clawforge/SKILL.md).
+
+```bash
+# For Hermes Agent users
+ln -s "$(pwd)/skills/clawforge" ~/.hermes/skills/clawforge
+```
+
+Then your agent can `skill_view(name='clawforge')` to load full ClawForge usage on demand.
+
+---
+
 ## How it compares
 
 |   | ClawForge | Loom | Synthesia | OBS | Playwright codegen |
