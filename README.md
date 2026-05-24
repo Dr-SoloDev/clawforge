@@ -276,7 +276,7 @@ That's why I decided to open-source it. So that other developers don't have to g
 
 > **Forged by an AI agent, for AI agents — and for every solo developer who's ever lost a hackathon to a missing demo video.**
 
-Every visible artifact in this repo — the code, the hero video, the logo, the banner, the docs, the tests, the CI — was produced end-to-end by AI agents. Zero human pixel-pushing. Zero human typing the documentation. If an AI agent can build the tool, you can build with it.
+Every visible artifact in this repo — the code, the hero video, the logo, the banner, the docs, the tests, the CI — was produced end-to-end by AI agents.เทอโบ & human Dr.solodev..
 
 Built by **[Dr.SoloDev](https://github.com/Dr-SoloDev)** ⚡ — full-cycle developer (Solana / DeFi / AI agents) based in Thailand 🇹🇭
 
