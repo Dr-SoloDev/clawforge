@@ -1,24 +1,44 @@
+# Node modules
 node_modules/
-output/
-output-*/
-*.mp4
-*.webm
-*.mp3
-*.wav
-.DS_Store
 
-# Python venv
+# Python virtual environment
 .venv/
 venv/
 __pycache__/
 *.pyc
 
-# Test/debug artifacts
-test_*.py
+# Output directories (demo videos)
+output-*/
+
+# Video files
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.wmv
+*.flv
+*.webm
+
+# Audio files (large samples)
+*.wav
+*.mp3
+*.ogg
+*.flac
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
 *.log
+npm-debug.log*
 
-# ClawForge runtime artifacts
-.clawforge-checkpoints/
-
-# Local examples (private project data)
-examples/secondhand-pos-*.yaml
+# Temporary files
+*.tmp
+*.temp
