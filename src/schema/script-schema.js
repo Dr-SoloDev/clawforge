@@ -43,6 +43,19 @@ export const SCRIPT_SCHEMA = {
             },
           ],
         },
+        music: {
+          type: 'object',
+          description: 'Background music with auto ducking during narration',
+          properties: {
+            file: { type: 'string', minLength: 1 },
+            volume: { type: 'number', minimum: 0, maximum: 1, default: 0.3 },
+            duckLevel: { type: 'number', minimum: 0, maximum: 1, default: 0.1 },
+            fadeIn: { type: 'number', minimum: 0, maximum: 30, default: 2 },
+            fadeOut: { type: 'number', minimum: 0, maximum: 30, default: 3 },
+            loop: { type: 'boolean', default: true },
+          },
+          additionalProperties: false,
+        },
         viewport: {
           type: 'object',
           required: ['width', 'height'],

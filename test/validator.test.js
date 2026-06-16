@@ -237,3 +237,112 @@ test('validateScript rejects invalid subtitles.marginV', () => {
   const result = validateScript(script);
   assert.ok(result.errors.some((e) => e.path.includes('marginV')));
 });
+
+/* ───── Music validation ───── */
+
+test('validateScript accepts valid music config', () => {
+  const script = {
+    project: {
+      name: 'test',
+      url: 'http://example.com',
+      output: './out',
+      music: {
+        file: './bgm.mp3',
+        volume: 0.3,
+        duckLevel: 0.1,
+      },
+    },
+    scenes: [{ name: 'scene-1', actions: [{ type: 'wait', ms: 1000 }] }],
+  };
+  const result = validateScript(script);
+  assert.equal(result.valid, true);
+});
+
+test('validateScript rejects music without file', () => {
+  const script = {
+    project: {
+      name: 'test',
+      url: 'http://example.com',
+      output: './out',
+      music: { volume: 0.5 },
+    },
+    scenes: [{ name: 'scene-1', actions: [{ type: 'wait', ms: 1000 }] }],
+  };
+  const result = validateScript(script);
+  assert.ok(result.errors.some((e) => e.path.includes('music') && e.path.includes('file')));
+});
+
+test('validateScript warns on unrecognized music format', () => {
+  const script = {
+    project: {
+      name: 'test',
+      url: 'http://example.com',
+      output: './out',
+      music: { file: 'bgm.xyz' },
+    },
+    scenes: [{ name: 'scene-1', actions: [{ type: 'wait', ms: 1000 }] }],
+  };
+  const result = validateScript(script);
+  assert.ok(result.warnings.some((e) => e.code === 'UNRECOGNIZED_FORMAT'));
+});
+
+test('validateScript rejects music.volume out of range', () => {
+  const script = {
+    project: {
+      name: 'test',
+      url: 'http://example.com',
+      output: './out',
+      music: { file: 'bgm.mp3', volume: 5 },
+    },
+    scenes: [{ name: 'scene-1', actions: [{ type: 'wait', ms: 1000 }] }],
+  };
+  const result = validateScript(script);
+  assert.ok(result.errors.some((e) => e.path.includes('volume')));
+});
+
+test('validateScript rejects music.duckLevel out of range', () => {
+  const script = {
+    project: {
+      name: 'test',
+      url: 'http://example.com',
+      output: './out',
+      music: { file: 'bgm.mp3', duckLevel: 1.5 },
+    },
+    scenes: [{ name: 'scene-1', actions: [{ type: 'wait', ms: 1000 }] }],
+  };
+  const result = validateScript(script);
+  assert.ok(result.errors.some((e) => e.path.includes('duckLevel')));
+});
+
+test('validateScript accepts music.fadeIn and fadeOut', () => {
+  const script = {
+    project: {
+      name: 'test',
+      url: 'http://example.com',
+      output: './out',
+      music: { file: 'bgm.wav', fadeIn: 3, fadeOut: 5 },
+    },
+    scenes: [{ name: 'scene-1', actions: [{ type: 'wait', ms: 1000 }] }],
+  };
+  const result = validateScript(script);
+  assert.equal(result.valid, true);
+});
+
+test('validateScript rejects music without file string type', () => {
+  const script = {
+    project: {
+      name: 'test',
+      url: 'http://example.com',
+      output: './out',
+      music: { file: 123 },
+    },
+    scenes: [{ name: 'scene-1', actions: [{ type: 'wait', ms: 1000 }] }],
+  };
+  const result = validateScript(script);
+  assert.ok(result.errors.some((e) => e.path.includes('file')));
+});
+
+test('SCRIPT_SCHEMA has music property in project schema', () => {
+  const projectSchema = SCRIPT_SCHEMA.properties.project;
+  assert.ok(projectSchema.properties.music, 'schema should have music property in project.properties');
+});

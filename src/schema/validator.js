@@ -313,6 +313,81 @@ function validateProject(project, errors, warnings) {
       }
     }
   }
+
+  if (project.music !== undefined) {
+    validateMusic(project.music, errors, warnings);
+  }
+}
+
+function validateMusic(music, errors, warnings) {
+  const path = 'project.music';
+
+  if (typeof music !== 'object' || music === null) {
+    errors.push({
+      path,
+      message: 'music must be an object',
+      code: 'INVALID_TYPE',
+    });
+    return;
+  }
+
+  if (!music.file || typeof music.file !== 'string') {
+    errors.push({
+      path: `${path}.file`,
+      message: 'music requires a "file" string (path to audio file)',
+      code: 'MISSING_REQUIRED',
+    });
+  } else {
+    const musicExt = music.file.split('.').pop().toLowerCase();
+    const validExts = /^(mp3|wav|ogg|flac|m4a|aac|wma)$/i;
+    if (!validExts.test(musicExt)) {
+      warnings.push({
+        path: `${path}.file`,
+        message: `Unrecognized audio format: ".${musicExt}". Supported: mp3, wav, ogg, flac, m4a, aac, wma`,
+        code: 'UNRECOGNIZED_FORMAT',
+      });
+    }
+  }
+
+  if (music.volume !== undefined) {
+    if (typeof music.volume !== 'number' || music.volume < 0 || music.volume > 1) {
+      errors.push({
+        path: `${path}.volume`,
+        message: 'volume must be a number between 0 and 1',
+        code: 'INVALID_VALUE',
+      });
+    }
+  }
+
+  if (music.duckLevel !== undefined) {
+    if (typeof music.duckLevel !== 'number' || music.duckLevel < 0 || music.duckLevel > 1) {
+      errors.push({
+        path: `${path}.duckLevel`,
+        message: 'duckLevel must be a number between 0 and 1',
+        code: 'INVALID_VALUE',
+      });
+    }
+  }
+
+  if (music.fadeIn !== undefined) {
+    if (typeof music.fadeIn !== 'number' || music.fadeIn < 0 || music.fadeIn > 30) {
+      errors.push({
+        path: `${path}.fadeIn`,
+        message: 'fadeIn must be a number between 0 and 30 seconds',
+        code: 'INVALID_VALUE',
+      });
+    }
+  }
+
+  if (music.fadeOut !== undefined) {
+    if (typeof music.fadeOut !== 'number' || music.fadeOut < 0 || music.fadeOut > 30) {
+      errors.push({
+        path: `${path}.fadeOut`,
+        message: 'fadeOut must be a number between 0 and 30 seconds',
+        code: 'INVALID_VALUE',
+      });
+    }
+  }
 }
 
 function validateVoice(voice, errors, warnings) {

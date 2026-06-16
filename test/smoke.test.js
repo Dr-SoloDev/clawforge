@@ -34,6 +34,16 @@ test('Self-demo YAML has subtitles enabled', async () => {
   assert.equal(script.project.subtitles, true);
 });
 
+test('Demo YAML has music config', async () => {
+  const script = await loadScript('./examples/demo-script.yaml');
+  assert.ok(script.project.music);
+  assert.equal(typeof script.project.music.file, 'string');
+  assert.equal(typeof script.project.music.volume, 'number');
+  assert.equal(typeof script.project.music.duckLevel, 'number');
+  assert.equal(typeof script.project.music.fadeIn, 'number');
+  assert.equal(typeof script.project.music.fadeOut, 'number');
+  assert.equal(script.project.music.loop, true);
+});
 test('Demo YAML has subtitles config object', async () => {
   const script = await loadScript('./examples/demo-script.yaml');
   assert.ok(script.project.subtitles);

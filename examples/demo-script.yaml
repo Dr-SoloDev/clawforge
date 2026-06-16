@@ -13,6 +13,13 @@ project:
     enabled: true
     lang: "eng"
     fontSize: 22
+  music:
+    file: "./assets/bgm.mp3"
+    volume: 0.3
+    duckLevel: 0.1
+    fadeIn: 2
+    fadeOut: 3
+    loop: true
 
 voice:
   engine: "edge-tts"

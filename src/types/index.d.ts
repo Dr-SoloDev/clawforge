@@ -15,6 +15,7 @@ export interface ProjectConfig {
   output: string;
   viewport: ViewportConfig;
   subtitles?: boolean | SubtitlesConfig;
+  music?: MusicConfig;
 }
 
 export interface SubtitlesConfig {
@@ -24,6 +25,15 @@ export interface SubtitlesConfig {
   fontColor?: string;
   outlineColor?: string;
   marginV?: number;
+}
+
+export interface MusicConfig {
+  file: string;
+  volume?: number;
+  duckLevel?: number;
+  fadeIn?: number;
+  fadeOut?: number;
+  loop?: boolean;
 }
 
 export interface ViewportConfig {
