@@ -9,6 +9,10 @@ project:
   viewport:
     width: 1280
     height: 720
+  subtitles:
+    enabled: true
+    lang: "eng"
+    fontSize: 22
 
 voice:
   engine: "edge-tts"

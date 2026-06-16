@@ -23,6 +23,26 @@ export const SCRIPT_SCHEMA = {
           type: 'string',
           minLength: 1,
         },
+        subtitles: {
+          type: ['boolean', 'object'],
+          default: false,
+          description: 'Enable subtitle burn-in. Can be true (default style) or style config object',
+          oneOf: [
+            { type: 'boolean' },
+            {
+              type: 'object',
+              properties: {
+                enabled: { type: 'boolean', default: true },
+                lang: { type: 'string', minLength: 2, default: 'eng' },
+                fontSize: { type: 'number', minimum: 8, maximum: 72, default: 24 },
+                fontColor: { type: 'string', default: 'white' },
+                outlineColor: { type: 'string', default: 'black' },
+                marginV: { type: 'number', minimum: 0, maximum: 200, default: 40 },
+              },
+              additionalProperties: false,
+            },
+          ],
+        },
         viewport: {
           type: 'object',
           required: ['width', 'height'],

@@ -14,6 +14,16 @@ export interface ProjectConfig {
   url: string;
   output: string;
   viewport: ViewportConfig;
+  subtitles?: boolean | SubtitlesConfig;
+}
+
+export interface SubtitlesConfig {
+  enabled?: boolean;
+  lang?: string;
+  fontSize?: number;
+  fontColor?: string;
+  outlineColor?: string;
+  marginV?: number;
 }
 
 export interface ViewportConfig {

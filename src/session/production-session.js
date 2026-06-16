@@ -9,6 +9,7 @@ import { join, resolve } from 'path';
 import { narrate } from '../narrator.js';
 import { record } from '../recorder.js';
 import { compose } from '../composer.js';
+import { generateSRT } from '../subtitles/generator.js';
 import { ClawForgeError, ErrorCodes, TTSError, PlaywrightError, FFmpegError } from '../errors/clawforge-errors.js';
 
 export class ProductionSession extends EventEmitter {
@@ -103,6 +104,20 @@ export class ProductionSession extends EventEmitter {
         durations: result.durations,
       });
 
+      // Generate SRT subtitles if enabled
+      if (this.script.project?.subtitles) {
+        try {
+          const srtContent = generateSRT(this.script.scenes, result.durations);
+          const srtPath = join(this.script.project.output, 'subtitles.srt');
+          mkdirSync(this.script.project.output, { recursive: true });
+          writeFileSync(srtPath, srtContent, 'utf-8');
+          this.state.srtPath = srtPath;
+          console.log('  📝 SRT subtitles generated');
+        } catch (err) {
+          console.warn(`  ⚠️ Subtitle generation failed: ${err.message}`);
+        }
+      }
+
       this.emit('stage:complete', {
         stage: 'narration',
         timestamp: Date.now(),
@@ -173,7 +188,8 @@ export class ProductionSession extends EventEmitter {
           this.state.videoPath,
           this.state.narrationFiles,
           this.script.scenes,
-          this.script.project.output
+          this.script.project.output,
+          this.state.srtPath
         ),
         {
           onRetry: ({ attempt, maxRetries, delay, error }) => {

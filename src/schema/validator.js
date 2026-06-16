@@ -294,6 +294,25 @@ function validateProject(project, errors, warnings) {
       }
     }
   }
+
+  if (project.subtitles !== undefined) {
+    if (typeof project.subtitles === 'object' && project.subtitles !== null) {
+      if (project.subtitles.fontSize !== undefined && (typeof project.subtitles.fontSize !== 'number' || project.subtitles.fontSize < 8 || project.subtitles.fontSize > 72)) {
+        errors.push({
+          path: `${path}.subtitles.fontSize`,
+          message: 'fontSize must be a number between 8 and 72',
+          code: 'INVALID_VALUE',
+        });
+      }
+      if (project.subtitles.marginV !== undefined && (typeof project.subtitles.marginV !== 'number' || project.subtitles.marginV < 0 || project.subtitles.marginV > 200)) {
+        errors.push({
+          path: `${path}.subtitles.marginV`,
+          message: 'marginV must be a number between 0 and 200',
+          code: 'INVALID_VALUE',
+        });
+      }
+    }
+  }
 }
 
 function validateVoice(voice, errors, warnings) {

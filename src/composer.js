@@ -1,16 +1,25 @@
 /**
- * AgentCast — Composer
+ * ClawForge — Composer
  * Merges video + audio into final MP4 using ffmpeg.
+ * Supports optional SRT subtitle burn-in.
  */
 
 import { execFile } from 'child_process';
 import { promisify } from 'util';
-import { existsSync, readdirSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
 const execFileAsync = promisify(execFile);
 
-export async function compose(videoPath, audioDir, scenes, outputDir) {
+/**
+ * @param {string} videoPath — path to recorded video
+ * @param {string} audioDir — directory with scene MP3 files
+ * @param {Array} scenes — scene definitions
+ * @param {string} outputDir — output directory
+ * @param {string} [srtPath] — optional path to SRT subtitle file for burn-in
+ * @returns {Promise<string>} path to final video
+ */
+export async function compose(videoPath, audioDir, scenes, outputDir, srtPath) {
   mkdirSync(outputDir, { recursive: true });
 
   const concatAudioPath = join(outputDir, 'narration.mp3');
@@ -18,7 +27,7 @@ export async function compose(videoPath, audioDir, scenes, outputDir) {
 
   console.log('🎞️  Composing final video');
 
-  // Step 1: Concatenate audio segments with gaps
+  // Step 1: Concatenate audio segments
   const audioFiles = scenes
     .filter((s) => s.narration)
     .map((s) => join(audioDir, `${s.name}.mp3`))
@@ -29,7 +38,7 @@ export async function compose(videoPath, audioDir, scenes, outputDir) {
     console.log('  ✅ Audio concatenated');
   }
 
-  // Step 2: Merge video + audio → MP4
+  // Step 2: Merge video + audio → MP4 (with optional subtitles)
   if (videoPath && existsSync(videoPath)) {
     const ffmpegArgs = [
       '-y',
@@ -38,26 +47,35 @@ export async function compose(videoPath, audioDir, scenes, outputDir) {
 
     if (existsSync(concatAudioPath)) {
       ffmpegArgs.push('-i', concatAudioPath);
+    }
+
+    // Add subtitle burn-in filter if SRT file exists
+    const hasSubtitles = srtPath && existsSync(srtPath);
+    if (hasSubtitles) {
+      // Use absolute path for subtitles filter (ffmpeg needs it for .srt)
+      const absSrtPath = join(process.cwd(), srtPath);
+      ffmpegArgs.push('-vf', `subtitles='${absSrtPath}'`);
+      console.log('  📝 Subtitles enabled');
+    }
+
+    ffmpegArgs.push(
+      '-c:v', 'libx264',
+      '-preset', 'fast',
+      '-crf', '23',
+      '-pix_fmt', 'yuv420p',
+    );
+
+    if (existsSync(concatAudioPath)) {
       ffmpegArgs.push(
-        '-c:v', 'libx264',
-        '-preset', 'fast',
-        '-crf', '23',
-        '-pix_fmt', 'yuv420p',
         '-c:a', 'aac',
         '-b:a', '192k',
         '-shortest',
-        finalPath
       );
     } else {
-      ffmpegArgs.push(
-        '-c:v', 'libx264',
-        '-preset', 'fast',
-        '-crf', '23',
-        '-pix_fmt', 'yuv420p',
-        '-an',
-        finalPath
-      );
+      ffmpegArgs.push('-an');
     }
+
+    ffmpegArgs.push(finalPath);
 
     console.log('  🔄 Encoding MP4...');
     await execFileAsync('ffmpeg', ffmpegArgs);

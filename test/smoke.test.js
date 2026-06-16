@@ -29,6 +29,19 @@ test('Script loader parses self-demo YAML', async () => {
   assert.equal(script.scenes.length, 4);
 });
 
+test('Self-demo YAML has subtitles enabled', async () => {
+  const script = await loadScript('./examples/clawforge-self-demo.yaml');
+  assert.equal(script.project.subtitles, true);
+});
+
+test('Demo YAML has subtitles config object', async () => {
+  const script = await loadScript('./examples/demo-script.yaml');
+  assert.ok(script.project.subtitles);
+  assert.equal(script.project.subtitles.enabled, true);
+  assert.equal(script.project.subtitles.lang, 'eng');
+  assert.equal(script.project.subtitles.fontSize, 22);
+});
+
 test('Validator accepts valid script', async () => {
   const forge = new ClawForgeSDK({ skipDependencyCheck: true });
   const result = await forge.validate('./examples/demo-script.yaml');
