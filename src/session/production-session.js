@@ -192,6 +192,7 @@ export class ProductionSession extends EventEmitter {
           this.state.srtPath,
           this.script.project.music,
           this.state.audioDurations,
+          this.script.project.webcam,
         ),
         {
           onRetry: ({ attempt, maxRetries, delay, error }) => {

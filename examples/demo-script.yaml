@@ -20,6 +20,14 @@ project:
     fadeIn: 2
     fadeOut: 3
     loop: true
+  webcam:
+    file: "./assets/speaker.mp4"
+    position: "bottom-right"
+    width: 320
+    height: 240
+    crop: "rectangle"
+    border: true
+    margin: 20
 
 voice:
   engine: "edge-tts"

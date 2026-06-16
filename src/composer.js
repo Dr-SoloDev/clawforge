@@ -1,7 +1,8 @@
 /**
  * ClawForge — Composer
  * Merges video + audio into final MP4 using ffmpeg.
- * Supports optional SRT subtitle burn-in and background music ducking.
+ * Supports optional SRT subtitle burn-in, background music ducking,
+ * and webcam picture-in-picture overlay.
  */
 
 import { execFile } from 'child_process';
@@ -14,6 +15,7 @@ import {
   buildDuckingFilter,
   calculateTotalDuration,
 } from './music/ducker.js';
+import { buildWebcamOverlay } from './webcam/index.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -25,9 +27,11 @@ const execFileAsync = promisify(execFile);
  * @param {string} [srtPath] — optional path to SRT subtitle file for burn-in
  * @param {object} [musicConfig] — optional background music config
  * @param {number[]} [audioDurations] — per-scene audio durations (needed for ducking)
+ * @param {object} [webcamConfig] — optional webcam PiP config
  * @returns {Promise<string>} path to final video
  */
-export async function compose(videoPath, audioDir, scenes, outputDir, srtPath, musicConfig, audioDurations) {
+export async function compose(videoPath, audioDir, scenes, outputDir,
+  srtPath, musicConfig, audioDurations, webcamConfig) {
   mkdirSync(outputDir, { recursive: true });
 
   const concatAudioPath = join(outputDir, 'narration.mp3');
@@ -63,9 +67,10 @@ export async function compose(videoPath, audioDir, scenes, outputDir, srtPath, m
     }
   }
 
-  // Step 3: Merge video + audio → MP4 (with optional subtitles)
+  // Step 3: Merge video + audio → MP4 (with optional subtitles & webcam)
   if (videoPath && existsSync(videoPath)) {
-    await mergeVideoAudio(videoPath, audioTrackPath, outputDir, finalPath, srtPath);
+    await mergeVideoAudio(videoPath, audioTrackPath, outputDir, finalPath,
+      srtPath, webcamConfig);
   } else {
     console.warn('  ⚠️ No video file found — skipping merge');
   }
@@ -84,41 +89,32 @@ async function mixWithMusic(narrationPath, musicPath, scenes, audioDurations, mu
     fadeOut = 3,
   } = musicConfig;
 
-  // Build narration timeline
   const segments = buildNarrationTimeline(scenes, audioDurations);
   const totalDuration = calculateTotalDuration(scenes, audioDurations);
 
-  // Build filter chain
-  // Inputs: [0:a] = narration, [1:a] = bgm
   const filterParts = [];
   let prevLabel = '[1:a]';
 
-  // Step 1: Base volume scaling
   if (volume !== 1) {
     filterParts.push(`[1:a]volume=${volume}[bgm_scaled]`);
     prevLabel = '[bgm_scaled]';
   }
 
-  // Step 2: Ducking during narration
   const duckRaw = buildDuckingFilter(segments, duckLevel);
-  // Replace [1:a] reference with the actual previous label
   filterParts.push(duckRaw.replace('[1:a]', prevLabel));
   prevLabel = '[bgm_ducked]';
 
-  // Step 3: Fade in
   if (fadeIn > 0) {
     filterParts.push(`${prevLabel}afade=t=in:ss=0:d=${fadeIn}[bgm_fadein]`);
     prevLabel = '[bgm_fadein]';
   }
 
-  // Step 4: Fade out
   if (fadeOut > 0 && totalDuration > 0) {
     const fadeOutStart = Math.max(0, totalDuration - fadeOut);
     filterParts.push(`${prevLabel}afade=t=out:st=${fadeOutStart}:d=${fadeOut}[bgm_fadeout]`);
     prevLabel = '[bgm_fadeout]';
   }
 
-  // Step 5: Mix narration + processed music
   filterParts.push(`[0:a]${prevLabel}amix=inputs=2:duration=first:dropout_transition=2[aout]`);
 
   const filterComplex = filterParts.join('; ');
@@ -138,20 +134,62 @@ async function mixWithMusic(narrationPath, musicPath, scenes, audioDurations, mu
 
 /**
  * Merge video track with audio track, optionally burning in subtitles
+ * and/or overlaying webcam PiP.
+ *
+ * Input layout (no webcam):
+ *   0 = video.mp4, 1 = audio.mp3
+ *
+ * Input layout (with webcam):
+ *   0 = video.mp4, 1 = audio.mp3, 2 = webcam.mp4
  */
-async function mergeVideoAudio(videoPath, audioPath, outputDir, finalPath, srtPath) {
-  const ffmpegArgs = [
-    '-y',
-    '-i', videoPath,
-  ];
+async function mergeVideoAudio(videoPath, audioPath, outputDir, finalPath,
+  srtPath, webcamConfig) {
+  const hasAudio = existsSync(audioPath);
+  const hasSubtitles = srtPath && existsSync(srtPath);
+  const hasWebcam = webcamConfig && webcamConfig.file && existsSync(webcamConfig.file);
 
-  if (existsSync(audioPath)) {
-    ffmpegArgs.push('-i', audioPath);
+  // Build ffmpeg args
+  const ffmpegArgs = ['-y', '-i', videoPath];
+
+  if (hasAudio) {
+    ffmpegArgs.push('-i', audioPath); // input 1
   }
 
-  // Add subtitle burn-in filter if SRT file exists
-  const hasSubtitles = srtPath && existsSync(srtPath);
-  if (hasSubtitles) {
+  if (hasWebcam) {
+    ffmpegArgs.push('-i', webcamConfig.file); // input 2
+    console.log('  📸 Webcam PiP overlay enabled');
+  }
+
+  const webcamIdx = hasAudio ? 2 : 1; // webcam input index
+  const audioIdx = 1; // always input 1 if present
+
+  // Build video filter chain
+  let useFilterComplex = false;
+  let filterChain = '';
+
+  if (hasWebcam) {
+    const viewportRes = { width: 1280, height: 720 };
+    const overlay = buildWebcamOverlay(webcamConfig, viewportRes, {
+      mainLabel: '[0:v]',
+      camLabel: `[${webcamIdx}:v]`,
+    });
+    filterChain = overlay.filterComplex;
+    let videoOut = overlay.videoOut;
+
+    if (hasSubtitles) {
+      const absSrtPath = join(process.cwd(), srtPath);
+      filterChain += `; ${videoOut}subtitles='${absSrtPath}'[v_final]`;
+      videoOut = '[v_final]';
+    }
+
+    useFilterComplex = true;
+    ffmpegArgs.push('-filter_complex', filterChain);
+    ffmpegArgs.push('-map', videoOut); // video from filter
+    if (hasAudio) {
+      ffmpegArgs.push('-map', `${audioIdx}:a`); // audio from narration track
+    }
+  } else if (hasSubtitles) {
+    // Simple subtitle burn-in (no -filter_complex needed)
     const absSrtPath = join(process.cwd(), srtPath);
     ffmpegArgs.push('-vf', `subtitles='${absSrtPath}'`);
     console.log('  📝 Subtitles enabled');
@@ -164,12 +202,8 @@ async function mergeVideoAudio(videoPath, audioPath, outputDir, finalPath, srtPa
     '-pix_fmt', 'yuv420p',
   );
 
-  if (existsSync(audioPath)) {
-    ffmpegArgs.push(
-      '-c:a', 'aac',
-      '-b:a', '192k',
-      '-shortest',
-    );
+  if (hasAudio) {
+    ffmpegArgs.push('-c:a', 'aac', '-b:a', '192k', '-shortest');
   } else {
     ffmpegArgs.push('-an');
   }

@@ -56,6 +56,28 @@ export const SCRIPT_SCHEMA = {
           },
           additionalProperties: false,
         },
+        webcam: {
+          type: 'object',
+          description: 'Webcam overlay (picture-in-picture) config',
+          properties: {
+            file: { type: 'string', minLength: 1 },
+            position: {
+              type: 'string',
+              enum: ['bottom-left', 'bottom-right', 'top-left', 'top-right'],
+              default: 'bottom-right',
+            },
+            width: { type: 'number', minimum: 64, maximum: 1280, default: 320 },
+            height: { type: 'number', minimum: 48, maximum: 960, default: 240 },
+            crop: {
+              type: 'string',
+              enum: ['rectangle', 'circle'],
+              default: 'rectangle',
+            },
+            border: { type: 'boolean', default: false },
+            margin: { type: 'number', minimum: 0, maximum: 200, default: 20 },
+          },
+          additionalProperties: false,
+        },
         viewport: {
           type: 'object',
           required: ['width', 'height'],

@@ -16,6 +16,17 @@ export interface ProjectConfig {
   viewport: ViewportConfig;
   subtitles?: boolean | SubtitlesConfig;
   music?: MusicConfig;
+  webcam?: WebcamConfig;
+}
+
+export interface WebcamConfig {
+  file: string;
+  position?: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
+  width?: number;
+  height?: number;
+  crop?: 'rectangle' | 'circle';
+  border?: boolean;
+  margin?: number;
 }
 
 export interface SubtitlesConfig {

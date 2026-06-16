@@ -232,9 +232,9 @@ Run `clawforge check-deps` to verify your environment.
 
 ## Roadmap
 
-- [ ] Burn-in subtitles (SRT generation)
-- [ ] Background music & ducking
-- [ ] Webcam overlay (picture-in-picture)
+- [x] Burn-in subtitles (SRT generation)
+- [x] Background music & ducking
+- [x] Webcam overlay (picture-in-picture)
 - [ ] Headed mode option
 - [ ] Multi-browser support (Firefox/WebKit)
 - [ ] Voice cloning integration

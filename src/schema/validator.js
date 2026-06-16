@@ -317,6 +317,10 @@ function validateProject(project, errors, warnings) {
   if (project.music !== undefined) {
     validateMusic(project.music, errors, warnings);
   }
+
+  if (project.webcam !== undefined) {
+    validateWebcam(project.webcam, errors, warnings);
+  }
 }
 
 function validateMusic(music, errors, warnings) {
@@ -384,6 +388,99 @@ function validateMusic(music, errors, warnings) {
       errors.push({
         path: `${path}.fadeOut`,
         message: 'fadeOut must be a number between 0 and 30 seconds',
+        code: 'INVALID_VALUE',
+      });
+    }
+  }
+}
+
+function validateWebcam(webcam, errors, warnings) {
+  const path = 'project.webcam';
+
+  if (typeof webcam !== 'object' || webcam === null) {
+    errors.push({
+      path,
+      message: 'webcam must be an object',
+      code: 'INVALID_TYPE',
+    });
+    return;
+  }
+
+  if (!webcam.file || typeof webcam.file !== 'string') {
+    errors.push({
+      path: `${path}.file`,
+      message: 'webcam requires a "file" string (path to webcam video file)',
+      code: 'MISSING_REQUIRED',
+    });
+  } else {
+    const webcamExt = webcam.file.split('.').pop().toLowerCase();
+    const validExts = /^(mp4|mov|avi|mkv|webm|flv|m4v)$/i;
+    if (!validExts.test(webcamExt)) {
+      warnings.push({
+        path: `${path}.file`,
+        message: `Unrecognized video format: ".${webcamExt}". Supported: mp4, mov, avi, mkv, webm, flv, m4v`,
+        code: 'UNRECOGNIZED_FORMAT',
+      });
+    }
+  }
+
+  if (webcam.position !== undefined) {
+    const validPositions = ['bottom-left', 'bottom-right', 'top-left', 'top-right'];
+    if (!validPositions.includes(webcam.position)) {
+      errors.push({
+        path: `${path}.position`,
+        message: `position must be one of: ${validPositions.join(', ')}`,
+        code: 'INVALID_VALUE',
+      });
+    }
+  }
+
+  if (webcam.width !== undefined) {
+    if (typeof webcam.width !== 'number' || webcam.width < 64 || webcam.width > 1280) {
+      errors.push({
+        path: `${path}.width`,
+        message: 'width must be a number between 64 and 1280',
+        code: 'INVALID_VALUE',
+      });
+    }
+  }
+
+  if (webcam.height !== undefined) {
+    if (typeof webcam.height !== 'number' || webcam.height < 48 || webcam.height > 960) {
+      errors.push({
+        path: `${path}.height`,
+        message: 'height must be a number between 48 and 960',
+        code: 'INVALID_VALUE',
+      });
+    }
+  }
+
+  if (webcam.crop !== undefined) {
+    const validCrops = ['rectangle', 'circle'];
+    if (!validCrops.includes(webcam.crop)) {
+      errors.push({
+        path: `${path}.crop`,
+        message: `crop must be one of: ${validCrops.join(', ')}`,
+        code: 'INVALID_VALUE',
+      });
+    }
+  }
+
+  if (webcam.border !== undefined) {
+    if (typeof webcam.border !== 'boolean') {
+      errors.push({
+        path: `${path}.border`,
+        message: 'border must be a boolean',
+        code: 'INVALID_TYPE',
+      });
+    }
+  }
+
+  if (webcam.margin !== undefined) {
+    if (typeof webcam.margin !== 'number' || webcam.margin < 0 || webcam.margin > 200) {
+      errors.push({
+        path: `${path}.margin`,
+        message: 'margin must be a number between 0 and 200',
         code: 'INVALID_VALUE',
       });
     }
