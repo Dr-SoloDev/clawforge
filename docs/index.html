@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ClawForge — Demo videos as code</title>
+<meta name="description" content="ClawForge: write a YAML script, get a polished MP4 with browser recording and AI voiceover. Built for hackathons, product demos, and AI agents." />
+<link rel="icon" href="assets/logo_preview_64.png" />
+<style>
+  :root {
+    --bg: #0b0d10;
+    --bg-card: #14171c;
+    --text: #e6e8eb;
+    --text-dim: #9aa1ab;
+    --accent: #f0883e;
+    --border: #23262b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .hero-banner {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 32px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  header img.logo {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 2rem;
+    margin: 0 0 8px;
+  }
+  .tagline {
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    max-width: 620px;
+    margin: 0 auto 32px;
+    text-align: center;
+  }
+  .links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+  .links a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .links a:hover { text-decoration: underline; }
+  section {
+    margin-bottom: 48px;
+  }
+  section h2 {
+    font-size: 1.3rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+  code {
+    background: var(--bg-card);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+  }
+  .sponsor-card {
+    display: flex;
+    justify-content: center;
+  }
+  .sponsor-card iframe {
+    border: 0;
+    border-radius: 8px;
+  }
+  footer {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-top: 64px;
+  }
+  footer a { color: var(--text-dim); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <img class="hero-banner" src="assets/hero-banner.png" alt="ClawForge — Demo videos as code" />
+
+    <header>
+      <img class="logo" src="assets/logo.png" alt="ClawForge logo" />
+      <h1>⚡ ClawForge</h1>
+    </header>
+
+    <p class="tagline">
+      Demo videos as code. Write a YAML script, get a polished MP4 with browser
+      recording and AI voiceover. Built for hackathons, product demos, and AI agents.
+    </p>
+
+    <div class="links">
+      <a href="https://github.com/Dr-SoloDev/clawforge">GitHub Repo</a>
+      <a href="https://github.com/Dr-SoloDev/clawforge/blob/main/README.md">README</a>
+      <a href="https://github.com/Dr-SoloDev/clawforge/blob/main/docs/SDK.md">SDK Docs</a>
+      <a href="https://github.com/Dr-SoloDev/clawforge/blob/main/CHANGELOG.md">Changelog</a>
+      <a href="https://www.npmjs.com/package/clawforge">npm</a>
+    </div>
+
+    <section>
+      <h2>Pipeline</h2>
+      <pre>Script (YAML) → Playwright (record) → edge-tts (narrate) → ffmpeg (render) → MP4</pre>
+    </section>
+
+    <section>
+      <h2>Quickstart</h2>
+      <pre>npm install -g clawforge
+clawforge my-demo.yaml</pre>
+      <p>Full quickstart and script reference in the <a href="https://github.com/Dr-SoloDev/clawforge#60-second-quickstart">README</a>.</p>
+    </section>
+
+    <section>
+      <h2>Sponsor</h2>
+      <p>
+        If ClawForge saved you from a last-minute demo video disaster,
+        consider supporting its development.
+      </p>
+      <div class="sponsor-card">
+        <iframe src="https://github.com/sponsors/Dr-SoloDev/card" title="Sponsor Dr-SoloDev" height="225" width="600" style="border: 0;" loading="lazy"></iframe>
+      </div>
+    </section>
+
+    <footer>
+      Built by <a href="https://github.com/Dr-SoloDev">Dr.SoloDev</a> ⚡ — MIT licensed.
+    </footer>
+  </div>
+</body>
+</html>

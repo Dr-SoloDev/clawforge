@@ -11,14 +11,33 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/clawforge"><img src="https://img.shields.io/npm/v/clawforge.svg" alt="npm version" /></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-0.4.0-blue" alt="version 0.4.0" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen" alt="Node" /></a>
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-compatible-blueviolet" alt="MCP Compatible" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/transport-stdio%20%7C%20SSE-orange" alt="Transport: stdio | SSE" /></a>
+</p>
+
+<p align="center">
+  <a href="#60-second-quickstart">Quickstart</a> ·
+  <a href="#use-it-from-claude-code-mcp">Claude Code</a> ·
+  <a href="#use-it-with-buildingai-mcp-over-sse">BuildingAI / SSE</a> ·
+  <a href="docs/SDK.md">SDK docs</a> ·
+  <a href="CHANGELOG.md">Changelog</a>
 </p>
 
 ```
 Script (YAML) → Playwright (record) → edge-tts (narrate) → ffmpeg (render) → MP4
 ```
+
+---
+
+## 🆕 What's new in 0.4.0
+
+- **MCP over SSE** — new `clawforge-mcp-sse/` HTTP wrapper lets web-based agents (BuildingAI, browser tools) call ClawForge tools over SSE instead of stdio. One `GET /mcp` session, JSON-RPC over POST, responses streamed back. See [Use it with BuildingAI](#use-it-with-buildingai-mcp-over-sse).
+- **Docker sidecar** — `docker-compose.buildingai.yml` ships a non-root, healthchecked ClawForge container with Postgres + Redis + BuildingAI in one command.
+- **Hardened server** — CORS, 30-min session TTL, `/health` probes ffmpeg/ffprobe/Playwright/edge-tts, `express.json()` body parsing, non-root Docker user.
+- **Audit clean** — 10/10 findings from the v0.3 review fixed. See [CHANGELOG](CHANGELOG.md#040---2026-06-18).
 
 ---
 
@@ -30,9 +49,10 @@ ClawForge treats demo videos like code — version-controlled, reproducible, reb
 
 - 🎬 **Scripted, not recorded** — YAML defines scenes, narration, and browser actions
 - 🎙️ **AI voiceover, 40+ languages** — Microsoft edge-tts neural voices, free
-- 🤖 **Agent-native** — SDK, MCP server, structured errors, event hooks
+- 🤖 **Agent-native** — SDK, MCP server (stdio + SSE), structured errors, event hooks
 - 🔁 **Reproducible** — same script, same video, every time
 - 💾 **Resumable** — checkpoint on failure, resume mid-pipeline
+- 🐳 **Container-ready** — Docker sidecar with healthcheck, non-root, 2gb shm for Playwright
 - 🆓 **MIT, no API keys** — runs entirely on your machine
 
 ---
@@ -107,7 +127,7 @@ That's the whole demo. Run `clawforge my-demo.yaml` and you get an MP4.
 | 🚀 Hackathon submitter | A polished demo video before the deadline, rebuildable until last minute |
 | 💼 SaaS founder | Landing page demos that update with your UI, no re-recording |
 | 📚 DevRel / docs author | Tutorial videos checked into the repo alongside code |
-| 🤖 AI agent developer | A `produce_video` tool your agent can call via MCP |
+| 🤖 AI agent developer | A `produce_video` tool your agent can call via MCP (stdio or SSE) |
 | 🧪 QA engineer | Visual regression videos generated in CI per PR |
 
 ---
@@ -163,7 +183,7 @@ Full SDK docs: [docs/SDK.md](docs/SDK.md)
 
 ---
 
-## Use it from Claude Code (MCP)
+## Use it from Claude Code (MCP — stdio)
 
 Add to `.claude/settings.json`:
 
@@ -180,6 +200,87 @@ Now Claude can call:
 - `clawforge_validate_script` — validate without executing
 - `clawforge_check_dependencies` — verify ffmpeg, edge-tts, Playwright
 - `clawforge_dry_run` — pre-flight check before production
+
+> Prefer a network transport? See [Use it with BuildingAI (MCP over SSE)](#use-it-with-buildingai-mcp-over-sse) below — same four tools, HTTP/SSE instead of stdio.
+
+---
+
+## Use it with BuildingAI (MCP over SSE)
+
+ClawForge v0.4.0 ships an HTTP/SSE transport wrapper so web-based agents like **BuildingAI** can call the same MCP tools over the network instead of stdio.
+
+### Quick start (local)
+
+```bash
+cd clawforge-mcp-sse
+npm install
+npm start
+# Server runs on http://0.0.0.0:3100/mcp
+```
+
+Verify:
+
+```bash
+curl http://127.0.0.1:3100/health
+# {"status":"ok","sessions":0,"dependencies":{"ffmpeg":true,"ffprobe":true,"playwright":true,"edgeTts":true}}
+```
+
+### Endpoints
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET`  | `/mcp` | Establish SSE session (returns `endpoint` event with POST URL) |
+| `POST` | `/mcp?sessionId=...` | Send JSON-RPC message (`tools/list`, `tools/call`) |
+| `GET`  | `/health` | Liveness + dependency status |
+
+### BuildingAI config
+
+Drop `examples/buildingai-mcp-config.json` into your BuildingAI MCP config:
+
+```json
+{
+  "mcpServers": {
+    "clawforge": {
+      "transport": "sse",
+      "url": "http://clawforge:3100/mcp",
+      "description": "ClawForge video production toolkit",
+      "tools": [
+        "clawforge_produce_video",
+        "clawforge_validate_script",
+        "clawforge_check_dependencies",
+        "clawforge_dry_run"
+      ]
+    }
+  }
+}
+```
+
+### Full stack with Docker
+
+```bash
+docker compose -f docker-compose.buildingai.yml up
+```
+
+Spins up Postgres + Redis + BuildingAI + ClawForge sidecar (shm_size 2gb for Playwright, memory limit 4g, non-root user, healthcheck).
+
+### Architecture
+
+```
+BuildingAI Agent                    ClawForge Container
++-----------------+    SSE/HTTP     +--------------------------+
+|  user asks      |                |  Express (port 3100)     |
+|  "make a demo"  | --GET /mcp-->  |    | SSE stream          |
+|                 | <--endpoint--  |  SSEServerTransport      |
+|  agent writes   |                |    |                     |
+|  YAML script    | --POST /mcp--> |  ClawForgeMCPServer      |
+|                 |                |    |                     |
+|  -> MP4 path    | <--message---  |  Playwright + edge-tts   |
++-----------------+                |  + ffmpeg                |
+                                   |  /app/output/demo.mp4    |
+                                   +--------------------------+
+```
+
+Full SSE docs: [docs/SDK.md#buildingai-mcp-sse-integration](docs/SDK.md#buildingai-mcp-sse-integration)
 
 ---
 
@@ -204,7 +305,8 @@ Then your agent can `skill_view(name='clawforge')` to load full ClawForge usage 
 | Reproducible from source | ✅ | ❌ | ⚠️ | ❌ | ⚠️ |
 | AI voiceover included | ✅ | ❌ | ✅ | ❌ | ❌ |
 | Real browser interaction | ✅ | ✅ (manual) | ❌ | ✅ | ✅ |
-| Agent / MCP support | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Agent / MCP support (stdio + SSE) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Docker sidecar ready | ✅ | ❌ | ❌ | ❌ | ❌ |
 | 40+ languages free | ✅ | — | 💰 | — | — |
 | Cost | Free, MIT | Freemium | 💰💰💰 | Free | Free |
 
@@ -227,6 +329,8 @@ Run `clawforge check-deps` to verify your environment.
 - **Checkpointing** — JSON checkpoints written to `./.clawforge-checkpoints/` after each stage
 - **Resume** — pick up from the last checkpoint with `clawforge resume <checkpoint.json>`
 - **Structured errors** — `ClawForgeError` with codes: `NETWORK_TIMEOUT`, `PLAYWRIGHT_ERROR`, `SELECTOR_NOT_FOUND`, `TTS_ERROR`, `NAVIGATION_FAILED`, `FFMPEG_ERROR`
+- **Session TTL (SSE)** — idle MCP SSE sessions auto-cleanup after 30 minutes
+- **Health endpoint (SSE)** — `/health` probes ffmpeg, ffprobe, Playwright, edge-tts before returning `ok`
 
 ---
 
@@ -240,8 +344,9 @@ Run `clawforge check-deps` to verify your environment.
 - [ ] Voice cloning integration
 - [ ] Cloud rendering for CI
 - [ ] Template gallery
+- [ ] Migrate SSE → Streamable HTTP transport (SDK 1.29+ recommended)
 
-[See open issues →](https://github.com/Dr-SoloDev/clawforge/issues) · [Contribute](CONTRIBUTING.md)
+[See open issues →](https://github.com/Dr-SoloDev/clawforge/issues) · [Contribute](CONTRIBUTING.md) · [Changelog](CHANGELOG.md)
 
 ---
 
@@ -291,6 +396,22 @@ Built by **[Dr.SoloDev](https://github.com/Dr-SoloDev)** ⚡ — full-cycle deve
 </p>
 
 Open to collaborations, hackathon partnerships, and DeFi / AI agent projects.
+
+## Sponsor
+
+If ClawForge saved you from a last-minute demo video disaster, consider supporting its development.
+
+<p align="left">
+  <a href="https://github.com/sponsors/Dr-SoloDev"><img src="https://img.shields.io/badge/Sponsor-%E2%9D%A4-red?logo=github-sponsors&logoColor=white" alt="Sponsor Dr-SoloDev on GitHub" /></a>
+</p>
+
+<!--
+GitHub strips <iframe> tags from README.md, so the sponsor card below only
+renders on pages that allow raw HTML (e.g. a GitHub Pages site or docs site),
+not on this README itself.
+
+<iframe src="https://github.com/sponsors/Dr-SoloDev/card" title="Sponsor Dr-SoloDev" height="225" width="600" style="border: 0;"></iframe>
+-->
 
 ---
 
