@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  clawforge:
+    build: .
+    image: clawforge/clawforge:latest
+    container_name: clawforge
+    stdin_open: true
+    tty: true
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    shm_size: 2gb
+    environment:
+      - NODE_ENV=production
+    entrypoint: ["node", "bin/clawforge.js"]
+    # Default: show help
+    command: ["--help"]

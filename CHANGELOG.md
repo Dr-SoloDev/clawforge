@@ -2,6 +2,25 @@
 
 All notable changes to ClawForge will be documented in this file.
 
+## [0.4.0] - 2026-07-17
+
+### Added
+- **`clawforge init` CLI wizard** (`src/init-wizard.js`) — interactive script generator
+  - 6 built-in templates: `landing-page`, `hackathon`, `saas-demo`, `tutorial`, `mobile-app`
+  - Non-interactive mode for CI/piped usage (`--template` flag)
+  - Voice selection with 13 common edge-tts voices
+  - Step-by-step scene builder with all action types
+- **`clawforge demo` command** — run self-demo with a single command, no args needed
+- **Auto-debug on Playwright failure** (`src/recorder.js`) — auto-screenshot + DOM dump when browser actions fail
+- **Docker support** — `Dockerfile` + `docker-compose.yml` + `.dockerignore`
+- **Init wizard test suite** (`test/init-wizard.test.js`) — 5 tests covering all templates and YAML output
+- **`cli --help` update** — shows all commands with descriptions
+
+### Changed
+- **Version bump** — 0.3.0 → 0.4.0
+- **package.json** — added `demo`, `init`, `test:watch` scripts; expanded keywords
+- **`bin/clawforge.js`** — top-level `resolve` import, cleaner help text
+
 ## [0.3.0] - 2026-05-24
 
 ### Added

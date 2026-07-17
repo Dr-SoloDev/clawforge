@@ -8,16 +8,18 @@
 import { ClawForgeSDK } from '../src/sdk/clawforge-sdk.js';
 import { ClawForgeError } from '../src/errors/clawforge-errors.js';
 import { getDependencyInstallInstructions } from '../src/utils/deps.js';
+import { resolve } from 'path';
 
 const args = process.argv.slice(2);
 
 if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
   console.log(`
-⚡ ClawForge — AI Agent Video Production Toolkit
+⚡ ClawForge — AI Agent Video Production Toolkit v${await getVersion()}
 
 Usage:
   clawforge <script.yaml>              Produce video from script
-  clawforge <script.yaml> -o <dir>     Specify output directory
+  clawforge init                       Create a new script interactively
+  clawforge demo                       Run the self-demo and see results instantly
   clawforge validate <script.yaml>     Validate script without executing
   clawforge check-deps                 Check dependencies
   clawforge resume <checkpoint.json>   Resume from checkpoint
@@ -29,11 +31,18 @@ Options:
   -h, --help           Show this help
   --version            Show version
 
+Commands:
+  init        Interactive script generator
+  demo        Run the self-demo
+  validate    Validate a script
+  check-deps  Check system dependencies
+  resume      Resume from a checkpoint
+
 Examples:
-  clawforge demo-script.yaml
+  clawforge init
+  clawforge demo
   clawforge my-app.yaml --output ./videos
   clawforge validate my-app.yaml
-  clawforge check-deps
 `);
   process.exit(0);
 }
@@ -63,6 +72,16 @@ if (command === 'check-deps') {
 
 if (command === 'resume') {
   await handleResume(args.slice(1));
+  process.exit(0);
+}
+
+if (command === 'demo') {
+  await handleDemo();
+  process.exit(0);
+}
+
+if (command === 'init') {
+  await handleInit(args.slice(1));
   process.exit(0);
 }
 
@@ -145,6 +164,66 @@ try {
   }
 
   process.exit(1);
+}
+
+async function getVersion() {
+  try {
+    const { readFileSync } = await import('fs');
+    const { fileURLToPath } = await import('url');
+    const { dirname, join } = await import('path');
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const pkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf-8'));
+    return pkg.version;
+  } catch {
+    return 'unknown';
+  }
+}
+
+async function handleDemo() {
+  const { resolve, dirname, join } = await import('path');
+  const { fileURLToPath } = await import('url');
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+
+  const demoScript = resolve(join(__dirname, '..', 'examples', 'clawforge-self-demo.yaml'));
+  const outputDir = resolve('./output-demo');
+
+  console.log('');
+  console.log('  ⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡');
+  console.log('  ⚡     ClawForge — Self Demo     ⚡');
+  console.log('  ⚡  Your demo, scripted.         ⚡');
+  console.log('  ⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡');
+  console.log('');
+
+  const forge = new ClawForgeSDK({ skipDependencyCheck: true });
+  forge.on('stage:start', ({ stage }) => console.log(`  ▶ ${stage}`));
+
+  try {
+    const result = await forge.produce(demoScript, { output: outputDir });
+    const elapsed = ((Date.now() - result.duration) / 1000).toFixed(1);
+    console.log(`\n  ✅ Demo complete!`);
+    console.log(`  📹 ${result.outputPath}`);
+    console.log(`  📊 ${(result.stats.fileSize / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`\n  💡 Run: clawforge init`);
+    console.log('');
+  } catch (error) {
+    console.error(`\n  ❌ Demo failed: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+async function handleInit(args) {
+  const templateFlag = args.indexOf('--template');
+  const template = templateFlag !== -1 && args[templateFlag + 1] ? args[templateFlag + 1] : undefined;
+
+  const { runWizard, writeScript } = await import('../src/init-wizard.js');
+
+  const script = await runWizard({ template });
+
+  const outputFile = resolve(`${script.project.name.toLowerCase().replace(/\s+/g, '-')}.yaml`);
+  writeScript(script, outputFile);
+
+  console.log(`\n  ✅ Script generated: ${outputFile}`);
+  console.log(`  🎬 Run: clawforge ${outputFile}\n`);
 }
 
 async function handleValidate(args) {

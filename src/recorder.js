@@ -1,17 +1,21 @@
 /**
- * AgentCast — Recorder
- * Records browser interactions via Playwright.
+ * ClawForge — Recorder
+ * Records browser interactions via Playwright with auto-debug on failure.
  */
 
 import { chromium } from 'playwright';
 import { setTimeout } from 'timers/promises';
-import { mkdirSync } from 'fs';
+import { mkdirSync, writeFileSync } from 'fs';
 import { join, isAbsolute } from 'path';
 
 export async function record(script, audioDurations) {
   const { project, scenes } = script;
   const videoDir = `${project.output}/video`;
+  const debugDir = `${project.output}/debug`;
   mkdirSync(videoDir, { recursive: true });
+  mkdirSync(debugDir, { recursive: true });
+
+  const debugFiles = [];
 
   console.log(`🎬 Recording ${scenes.length} scenes at ${project.viewport.width}x${project.viewport.height}`);
 
@@ -40,7 +44,22 @@ export async function record(script, audioDurations) {
         try {
           await executeAction(page, action, project);
         } catch (err) {
-          console.warn(`  ⚠️ Action ${action.type} failed: ${err.message.split('\n')[0]} (continuing)`);
+          const sceneSlug = scene.name.replace(/[^a-z0-9_-]/gi, '_').toLowerCase();
+          const ts = Date.now();
+          const ssPath = join(debugDir, `${sceneSlug}-${action.type}-${ts}.png`);
+          const htmlPath = join(debugDir, `${sceneSlug}-${action.type}-${ts}.html`);
+
+          try {
+            await page.screenshot({ path: ssPath, fullPage: true });
+            const html = await page.content();
+            writeFileSync(htmlPath, html, 'utf-8');
+            debugFiles.push({ scene: scene.name, action: action.type, screenshot: ssPath, html: htmlPath });
+          } catch (_) {
+            // debug capture failed silently — don't break recording
+          }
+
+          console.warn(`  ⚠️ Action ${action.type} failed: ${err.message.split('\n')[0]}`);
+          console.warn(`     📸 Debug: ${ssPath}`);
         }
       }
       const actionElapsed = Date.now() - actionStart;
@@ -51,6 +70,9 @@ export async function record(script, audioDurations) {
       }
     }
     console.log('  ✅ Recording complete');
+    if (debugFiles.length > 0) {
+      console.log(`  📁 ${debugFiles.length} debug capture(s) saved to ${debugDir}/`);
+    }
   } finally {
     const videoPath = await page.video()?.path();
     await page.close();

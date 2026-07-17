@@ -1,6 +1,6 @@
 {
   "name": "clawforge",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Demo videos as code — YAML script → Playwright recording → AI voiceover → MP4. Built for hackathons, product demos, and AI agents.",
   "type": "module",
   "main": "src/sdk-exports.js",
@@ -24,8 +24,11 @@
   },
   "scripts": {
     "start": "node bin/clawforge.js",
+    "demo": "node bin/clawforge.js examples/clawforge-self-demo.yaml",
+    "init": "node bin/clawforge.js init",
     "example": "node bin/clawforge.js examples/demo-script.yaml",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "test:watch": "node --test --watch test/*.test.js"
   },
   "keywords": [
     "ai-agent",
@@ -36,7 +39,11 @@
     "edge-tts",
     "ffmpeg",
     "automation",
-    "hackathon"
+    "hackathon",
+    "clawforge",
+    "mcp",
+    "screencast",
+    "video-as-code"
   ],
   "author": "Dr.solodev <contact@drsolodev.com>",
   "license": "MIT",
