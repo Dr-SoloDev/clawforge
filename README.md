@@ -34,10 +34,13 @@ Script (YAML) → Playwright (record) → edge-tts (narrate) → ffmpeg (render)
 
 ## 🆕 What's new in 0.4.0
 
-- **MCP over SSE** — new `clawforge-mcp-sse/` HTTP wrapper lets web-based agents (BuildingAI, browser tools) call ClawForge tools over SSE instead of stdio. One `GET /mcp` session, JSON-RPC over POST, responses streamed back. See [Use it with BuildingAI](#use-it-with-buildingai-mcp-over-sse).
-- **Docker sidecar** — `docker-compose.buildingai.yml` ships a non-root, healthchecked ClawForge container with Postgres + Redis + BuildingAI in one command.
-- **Hardened server** — CORS, 30-min session TTL, `/health` probes ffmpeg/ffprobe/Playwright/edge-tts, `express.json()` body parsing, non-root Docker user.
-- **Audit clean** — 10/10 findings from the v0.3 review fixed. See [CHANGELOG](CHANGELOG.md#040---2026-06-18).
+- **`clawforge init`** — interactive CLI wizard generates scripts in seconds. Pick from 6 templates or build custom scenes. No YAML knowledge needed.
+- **`clawforge demo`** — run the self-demo with a single command. See ClawForge in action without writing anything.
+- **Auto-debug on failure** — when a browser action fails, ClawForge auto-captures a screenshot and page HTML so you know exactly what went wrong.
+- **Docker support** — `Dockerfile` + `docker-compose.yml` for zero-setup containerized usage.
+- **Template gallery** — 5 built-in templates: `landing-page`, `hackathon`, `saas-demo`, `tutorial`, `mobile-app`.
+- **MCP over SSE** — new `clawforge-mcp-sse/` HTTP wrapper for web-based agents (BuildingAI, browser tools). See [Use it with BuildingAI](#use-it-with-buildingai-mcp-over-sse).
+- **Docker sidecar** — `docker-compose.buildingai.yml` for BuildingAI integration.
 
 ---
 
@@ -57,25 +60,35 @@ ClawForge treats demo videos like code — version-controlled, reproducible, reb
 
 ---
 
-## 60-second quickstart
+## 30-second quickstart
 
+### 🐳 Option A: Docker (zero install)
+```bash
+docker run -v $(pwd):/app clawforge/clawforge init
+docker run -v $(pwd):/app clawforge/clawforge my-demo.yaml
+```
+
+### ⚡ Option B: npm
 ```bash
 # 1. Install
 npm install -g clawforge
 pip install edge-tts
 npx playwright install chromium
 
-# 2. Verify
-clawforge check-deps
+# 2. Create your first script
+clawforge init --template landing-page
 
-# 3. Run the self-demo (no local server required)
-git clone https://github.com/Dr-SoloDev/clawforge.git && cd clawforge
-npm install
-node bin/clawforge.js examples/clawforge-self-demo.yaml
+# 3. Produce the video
+clawforge my-demo.yaml
 
 # 4. Watch your video
-xdg-open output-hero/output.mp4   # Linux
-open output-hero/output.mp4       # macOS
+xdg-open output/output.mp4   # Linux
+open output/output.mp4       # macOS
+```
+
+### 🎮 Option C: Just see it work
+```bash
+npx clawforge demo
 ```
 
 ---
@@ -152,6 +165,8 @@ Selectors are [Playwright locators](https://playwright.dev/docs/locators) — CS
 
 ```bash
 clawforge <script.yaml>              # Produce a video
+clawforge init                       # Create a script interactively
+clawforge demo                       # Run the self-demo instantly
 clawforge validate <script.yaml>     # Validate without running
 clawforge check-deps                 # Check all dependencies
 clawforge resume <checkpoint.json>   # Resume from last checkpoint
@@ -160,6 +175,7 @@ clawforge resume <checkpoint.json>   # Resume from last checkpoint
 -o, --output <dir>     Override output directory
 -v, --verbose          Verbose logging
 --skip-deps            Skip dependency check
+--template <name>      Use a template with init (non-interactive)
 ```
 
 ---
@@ -314,10 +330,19 @@ Then your agent can `skill_view(name='clawforge')` to load full ClawForge usage 
 
 ## Requirements
 
+### Local install
 - Node.js ≥ 20
 - Python 3 (for `edge-tts`)
 - `ffmpeg` & `ffprobe` in PATH
 - Chromium (installed via `npx playwright install chromium`)
+
+### Docker
+```bash
+docker pull clawforge/clawforge
+docker run -v $(pwd):/app clawforge/clawforge --help
+```
+
+All dependencies pre-installed. See [Dockerfile](Dockerfile) for details.
 
 Run `clawforge check-deps` to verify your environment.
 
