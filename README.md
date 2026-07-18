@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">
-  <img src="assets/logo.png" alt="ClawForge" width="120" /><br/>
+  <br/>
   ⚡ ClawForge
 </h1>
 
