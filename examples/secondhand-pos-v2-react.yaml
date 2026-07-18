@@ -1,0 +1,133 @@
+# Secondhand POS v2 (React) — Full Demo Video
+# วิดีโอแนะนำการใช้งานเวอร์ชัน React ใหม่
+
+project:
+  name: "Secondhand POS v2 React Demo"
+  url: "http://localhost:8080/admin-v2/"
+  output: "./output-pos-v2"
+  viewport:
+    width: 1280
+    height: 720
+
+voice:
+  engine: "edge-tts"
+  voice: "th-TH-PremwadeeNeural"
+  rate: "-5%"
+
+scenes:
+  - name: "01-intro"
+    narration: >
+      สวัสดีครับ ขอแนะนำระบบรับซื้อของเก่า เวอร์ชั่นใหม่ ที่ออกแบบใหม่ทั้งหมด
+      ด้วย React และดีไซน์ ดาร์คโหมด สไตล์มืออาชีพ
+      ลื่นไหลกว่าเดิม สวยงามกว่าเดิม ใช้งานสะดวกกว่าเดิม
+    pauseAfter: 1500
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin-v2/login" }
+      - { type: "wait", ms: 4000 }
+
+  - name: "02-login"
+    narration: >
+      หน้าเข้าสู่ระบบดีไซน์ใหม่ มินิมอล สะอาดตา ใช้งานง่ายบนมือถือและคอมพิวเตอร์
+      พิมพ์ชื่อผู้ใช้และรหัสผ่าน แล้วกดเข้าสู่ระบบได้เลย
+    pauseAfter: 1000
+    actions:
+      - { type: "fill", selector: "input[type=text]", text: "admin" }
+      - { type: "wait", ms: 1500 }
+      - { type: "fill", selector: "input[type=password]", text: "admin" }
+      - { type: "wait", ms: 1500 }
+      - { type: "click", selector: "button[type=submit]" }
+      - { type: "wait", ms: 4000 }
+
+  - name: "03-dashboard"
+    narration: >
+      หน้าแดชบอร์ดใหม่ แสดงสถิติสำคัญที่ต้องการเห็นในที่เดียว ยอดรับซื้อวันนี้
+      เงินที่จ่ายไป จำนวนผู้ขาย และสต็อกคงเหลือ พร้อมแสดงรายการรับซื้อล่าสุด
+      และทางลัดเริ่มต้นเร็วที่ใช้บ่อย
+    pauseAfter: 1000
+    actions:
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", dy: 200 }
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "04-purchase-orders"
+    narration: >
+      หน้ารับซื้อของ คือหัวใจหลักของระบบ ออกแบบใหม่ให้ใช้งานเร็วขึ้น
+      กดปุ่มรับซื้อใหม่ จะเปิดฟอร์มขึ้นมาให้กรอกข้อมูล
+    pauseAfter: 1000
+    actions:
+      - { type: "click", selector: "a[href='/admin-v2/purchase-orders']" }
+      - { type: "wait", ms: 4000 }
+
+  - name: "05-purchase-modal"
+    narration: >
+      ฟอร์มรับซื้อใหม่ ออกแบบเป็น โมดอล ที่ใช้งานสะดวก
+      เลือกผู้ขาย เลือกสาขา เพิ่มรายการสินค้าได้ไม่จำกัด แต่ละรายการ
+      เลือกหมวดหมู่ สภาพสินค้า และเลือก Tier ราคา 3 ระดับได้
+      ระบบคำนวณยอดรวมให้อัตโนมัติแบบเรียลไทม์
+    pauseAfter: 1500
+    actions:
+      - { type: "click", selector: "main button.btn-primary" }
+      - { type: "wait", ms: 5000 }
+      - { type: "scroll", dy: 200 }
+      - { type: "wait", ms: 4000 }
+      - { type: "wait", ms: 1500 }
+
+  - name: "06-sellers"
+    narration: >
+      หน้าจัดการผู้ขาย เก็บข้อมูลผู้นำสินค้ามาขาย พร้อมระบบค้นหาที่รวดเร็ว
+      สามารถค้นหาด้วยชื่อ เบอร์โทร หรือเลขบัตรประชาชน และยังมีระบบบัญชีดำ
+      สำหรับลูกค้าที่มีปัญหา
+    pauseAfter: 1000
+    actions:
+      - { type: "click", selector: "a[href='/admin-v2/sellers']" }
+      - { type: "wait", ms: 4000 }
+      - { type: "scroll", dy: 100 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "07-price-tiers"
+    narration: >
+      ฟีเจอร์เด่น คือราคา 3 ระดับ Tier 1 เป็นราคาปกติ Tier 2 เป็นราคากลาง
+      Tier 3 เป็นราคาสูงสุด พนักงานหน้าร้านสามารถเลือกใช้ตามคุณภาพสินค้าได้
+      ลดความผิดพลาดในการคิดราคา และมีบันทึกประวัติว่าใช้ Tier ไหน
+    pauseAfter: 1000
+    actions:
+      - { type: "click", selector: "a[href='/admin-v2/price-tiers']" }
+      - { type: "wait", ms: 4000 }
+      - { type: "scroll", dy: 150 }
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "08-inventory-reports"
+    narration: >
+      หน้าสินค้าคงคลัง สำหรับติดตามของที่รับซื้อมาแล้ว และหน้ารายงาน
+      สำหรับสรุปข้อมูลธุรกิจ ทั้งสองหน้านี้กำลังพัฒนาเพิ่มเติม
+      ในเวอร์ชั่นถัดไปจะครบสมบูรณ์
+    pauseAfter: 1000
+    actions:
+      - { type: "click", selector: "a[href='/admin-v2/inventory']" }
+      - { type: "wait", ms: 3500 }
+      - { type: "click", selector: "a[href='/admin-v2/reports']" }
+      - { type: "wait", ms: 3500 }
+
+  - name: "09-settings"
+    narration: >
+      หน้าตั้งค่า แสดงข้อมูลบัญชีผู้ใช้และข้อมูลระบบ
+      ที่สำคัญ ลูกค้าสามารถสลับกลับไปใช้ UI เวอร์ชั่นเดิมได้ตลอดเวลา
+      ทั้งสองเวอร์ชั่นใช้ฐานข้อมูลเดียวกัน
+    pauseAfter: 1000
+    actions:
+      - { type: "click", selector: "a[href='/admin-v2/settings']" }
+      - { type: "wait", ms: 5000 }
+
+  - name: "10-outro"
+    narration: >
+      ทั้งหมดนี้คือระบบรับซื้อของเก่าเวอร์ชั่น React ใหม่ ดีไซน์ใหม่ทั้งหมด
+      เร็วกว่า สวยกว่า และใช้งานสะดวกกว่าเดิม โดยเวอร์ชั่นเดิมยังเปิดให้ใช้งานต่อไปได้
+      ลูกค้าเลือกใช้เวอร์ชั่นที่ชอบได้ตามต้องการ ขอบคุณที่รับชมครับ
+    pauseAfter: 1500
+    actions:
+      - { type: "click", selector: "a[href='/admin-v2/dashboard']" }
+      - { type: "wait", ms: 5000 }

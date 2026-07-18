@@ -1,0 +1,82 @@
+project:
+  name: "ระบบ POS ร้านรับซื้อของเก่า — โฆษณา Facebook"
+  url: "http://localhost:8080"
+  output: "./output-pos-facebook"
+  viewport:
+    width: 1280
+    height: 720
+
+voice:
+  engine: "edge-tts"
+  voice: "th-TH-PremwadeeNeural"
+  rate: "-3%"
+
+scenes:
+  - name: "pain-point"
+    narration: >
+      ร้านรับซื้อของเก่า จดสมุด บวกเลขเอง เปิดหลายสาขาก็ยิ่งยุ่ง
+      ไม่รู้ว่าวันนี้รับซื้อไปเท่าไหร่ กำไรอยู่ที่ไหน ใครรับซื้อราคาเกิน
+      ปัญหาเหล่านี้มีทางออกแล้วครับ
+    pauseAfter: 300
+    actions:
+      - { type: "goto", url: "http://localhost:8080" }
+      - { type: "wait", ms: 4000 }
+
+  - name: "login-dashboard"
+    narration: >
+      ระบบ POS สำหรับร้านรับซื้อของเก่าโดยเฉพาะ
+      เปิดมาเห็นทันทีว่าวันนี้แต่ละสาขาเป็นยังไง ไม่ต้องโทรถาม ไม่ต้องรอรายงาน
+    pauseAfter: 300
+    actions:
+      - { type: "fill", selector: "input[name='username'], input[type='text']", text: "admin" }
+      - { type: "wait", ms: 300 }
+      - { type: "fill", selector: "input[name='password'], input[type='password']", text: "admin" }
+      - { type: "wait", ms: 300 }
+      - { type: "click", selector: "button[type='submit'], .btn-login, input[type='submit']" }
+      - { type: "wait", ms: 3000 }
+
+  - name: "purchase-order"
+    narration: >
+      บันทึกการรับซื้อแต่ละครั้งได้ครบ ทั้งชื่อคนขาย ประเภทของ น้ำหนัก ราคา
+      มีปัญหาทีหลัง ย้อนดูได้ทันทีว่าใครรับซื้อ ราคาเท่าไหร่ วันไหน
+    pauseAfter: 300
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/purchase-orders.html" }
+      - { type: "wait", ms: 3000 }
+
+  - name: "price-tiers"
+    narration: >
+      ตั้งราคารับซื้อไว้ในระบบ แยกตามประเภทและเกรดสินค้า
+      พนักงานทุกสาขาเห็นราคาเดียวกัน ไม่มีใครต่อราคาเองตามใจได้อีกแล้ว
+    pauseAfter: 300
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/price-tiers.html" }
+      - { type: "wait", ms: 3000 }
+
+  - name: "sellers"
+    narration: >
+      เก็บประวัติคนที่เอาของมาขายทุกคน ใครมาบ่อย เอาของประเภทไหนมา
+      ทุกสาขาดูแลลูกค้าประจำได้เหมือนกัน แม้ไม่เคยเจอกันมาก่อน
+    pauseAfter: 300
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/sellers.html" }
+      - { type: "wait", ms: 3000 }
+
+  - name: "reports"
+    narration: >
+      รายงานดึงได้ทันที แยกตามสาขา ตามพนักงาน ตามประเภทสินค้า
+      สิ้นเดือนไม่ต้องนั่งรวมยอดจากสมุดหลายเล่มอีกต่อไปครับ
+    pauseAfter: 300
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/reports.html" }
+      - { type: "wait", ms: 3000 }
+
+  - name: "outro"
+    narration: >
+      พัฒนาโดย Dr.Solodev และทีม Novapulse ครับ
+      ไม่ได้เอาซอฟต์แวร์กลางๆ มาขาย แต่นั่งคุยกับเจ้าของร้านจริง แล้วสร้างให้ตรงปัญหา
+      สนใจระบบนี้ หรืออยากให้พัฒนาระบบให้ธุรกิจของคุณ ทักมาได้เลยครับ
+    pauseAfter: 1000
+    actions:
+      - { type: "goto", url: "http://localhost:8080" }
+      - { type: "wait", ms: 4500 }

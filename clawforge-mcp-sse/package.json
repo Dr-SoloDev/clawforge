@@ -1,0 +1,16 @@
+{
+  "name": "clawforge-mcp-sse",
+  "version": "0.4.0",
+  "description": "ClawForge MCP SSE Wrapper — HTTP/SSE transport for BuildingAI integration",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "express": "^5.2.1",
+    "playwright": "^1.52.0",
+    "yaml": "^2.7.1"
+  }
+}

@@ -259,6 +259,207 @@ Validate and check dependencies without executing.
 }
 ```
 
+## BuildingAI MCP SSE Integration
+
+ClawForge v0.4.0 ships an HTTP/SSE transport wrapper (`clawforge-mcp-sse/`) so web-based agents like **BuildingAI** can call the same four MCP tools over the network instead of stdio.
+
+### Why SSE?
+
+The stdio MCP transport (`clawforge-mcp` binary) is great for local CLI agents like Claude Code. But browser-based agents or server-side platforms like BuildingAI need an HTTP transport. The SSE transport is well-supported by the MCP SDK and simple to reason about: one GET stream for server-to-client messages, one POST endpoint per session for client-to-server messages.
+
+### Architecture
+
+```
+BuildingAI Agent                    ClawForge SSE Server (port 3100)
++-----------------+    SSE/HTTP     +--------------------------+
+|  user asks      |                |  Express                 |
+|  "make a demo"  | --GET /mcp-->  |    | SSE stream          |
+|                 | <--endpoint--  |  SSEServerTransport      |
+|  agent writes   |                |    |                     |
+|  YAML script    | --POST /mcp--> |  ClawForgeMCPServer      |
+|                 |                |    |                     |
+|  -> MP4 path    | <--message---  |  Playwright + edge-tts   |
++-----------------+                |  + ffmpeg                |
+                                   |  /app/output/demo.mp4    |
+                                   +--------------------------+
+```
+
+Each SSE session instantiates its own `ClawForgeMCPServer` + `SSEServerTransport` pair, stored in an in-memory `Map` keyed by `sessionId`. The core `src/mcp/clawforge-mcp-server.js` is reused unchanged.
+
+### Local setup
+
+```bash
+cd clawforge-mcp-sse
+npm install
+npm start
+# [clawforge-mcp-sse] Server running on http://0.0.0.0:3100/mcp
+# [clawforge-mcp-sse] Health check at http://0.0.0.1:3100/health
+```
+
+Verify:
+
+```bash
+curl http://127.0.0.1:3100/health
+```
+
+```json
+{
+  "status": "ok",
+  "sessions": 0,
+  "dependencies": {
+    "ffmpeg": true,
+    "ffprobe": true,
+    "playwright": true,
+    "edgeTts": true
+  }
+}
+```
+
+### Endpoints
+
+| Method | Path | Body | Returns |
+|---|---|---|---|
+| `GET`  | `/mcp` | — | SSE stream; first event `endpoint` carries the POST URL with `sessionId` |
+| `POST` | `/mcp?sessionId=<uuid>` | JSON-RPC message | `202 Accepted` (response flows back via SSE `message` event) |
+| `GET`  | `/health` | — | `{ status, sessions, dependencies }` |
+
+CORS is permissive (`Access-Control-Allow-Origin: *`) and OPTIONS preflight returns `204`.
+
+### Session lifecycle
+
+- **Created** on `GET /mcp` — `SSEServerTransport` generates a UUID `sessionId`
+- **Reused** for all `POST /mcp?sessionId=...` calls in that session
+- **Cleaned up** on SSE `close` event OR after 30-minute TTL (whichever fires first)
+- TTL sweeper runs every 60s and calls `transport.close()` on expired sessions
+
+### Protocol flow
+
+```js
+// 1. Client opens SSE stream
+const es = new EventSource('http://clawforge:3100/mcp');
+
+es.addEventListener('endpoint', (event) => {
+  const postUrl = event.data; // /mcp?sessionId=<uuid>
+
+  // 2. Client sends tools/list
+  fetch(`http://clawforge:3100${postUrl}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0', id: '1',
+      method: 'tools/list', params: {},
+    }),
+  });
+  // Server responds 202 Accepted immediately.
+  // The actual JSON-RPC response arrives via the SSE stream below.
+});
+
+// 3. Responses come back through the SSE message event
+es.addEventListener('message', (event) => {
+  const msg = JSON.parse(event.data);
+  if (msg.id === '1' && msg.result?.tools) {
+    console.log(msg.result.tools.map(t => t.name));
+    // ['clawforge_produce_video', 'clawforge_validate_script',
+    //  'clawforge_check_dependencies', 'clawforge_dry_run']
+  }
+});
+```
+
+### Calling a tool
+
+```js
+fetch(`http://clawforge:3100${postUrl}`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    jsonrpc: '2.0', id: '2',
+    method: 'tools/call',
+    params: {
+      name: 'clawforge_dry_run',
+      arguments: {
+        script: {
+          project: { name: 'demo', url: 'https://example.com' },
+          scenes: [
+            { name: 'home', narration: 'Welcome',
+              actions: [{ type: 'goto', url: 'https://example.com' }] }
+          ],
+        },
+      },
+    },
+  }),
+});
+```
+
+The response arrives via the SSE `message` event:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "2",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"validation\":{\"valid\":true,...},\"dependencies\":{...}}"
+      }
+    ]
+  }
+}
+```
+
+### BuildingAI configuration
+
+Drop `examples/buildingai-mcp-config.json` into your BuildingAI MCP config:
+
+```json
+{
+  "mcpServers": {
+    "clawforge": {
+      "transport": "sse",
+      "url": "http://clawforge:3100/mcp",
+      "description": "ClawForge video production toolkit",
+      "tools": [
+        "clawforge_produce_video",
+        "clawforge_validate_script",
+        "clawforge_check_dependencies",
+        "clawforge_dry_run"
+      ]
+    }
+  }
+}
+```
+
+### Docker deployment
+
+```bash
+docker compose -f docker-compose.buildingai.yml up
+```
+
+Services:
+
+| Service | Image | Purpose |
+|---|---|---|
+| `db` | postgres:17 | BuildingAI database |
+| `redis` | redis:7-alpine | BuildingAI queue |
+| `buildingai` | (built from `./BuildingAI`) | Agent platform on port 4090 |
+| `clawforge` | (built from `./clawforge-mcp-sse/Dockerfile`) | SSE sidecar on port 3100, `shm_size: 2gb`, memory limit 4g |
+
+The ClawForge container runs as non-root user `clawforge:1001` and exposes a Docker `HEALTHCHECK` polling `/health` every 30s.
+
+### Test client
+
+```bash
+node clawforge-mcp-sse/test-client.js
+```
+
+Verifies the full round-trip: SSE connect → `tools/list` → `clawforge_dry_run` → `clawforge_check_dependencies`.
+
+### Notes
+
+- `SSEServerTransport` is marked deprecated in MCP SDK 1.29.0 in favor of `StreamableHTTPServerTransport`. Both work; SSE was chosen for BuildingAI compatibility and simpler request/response semantics. Migration to Streamable HTTP is a future option.
+- Each SSE session holds a `ClawForgeMCPServer` instance in memory. For long-running video productions, keep the SSE connection open for the duration of the `tools/call` — the response comes back through the same stream.
+- The SSE wrapper makes no changes to `src/mcp/clawforge-mcp-server.js`. It is a pure transport adapter.
+
 ## Script Format
 
 ### Complete Example

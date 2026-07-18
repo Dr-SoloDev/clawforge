@@ -11,6 +11,7 @@ import { record } from '../recorder.js';
 import { compose } from '../composer.js';
 import { generateSRT } from '../subtitles/generator.js';
 import { ClawForgeError, ErrorCodes, TTSError, PlaywrightError, FFmpegError } from '../errors/clawforge-errors.js';
+import { RetryPolicy } from '../errors/retry-policy.js';
 
 export class ProductionSession extends EventEmitter {
   constructor(script, sdk, options = {}) {
@@ -37,7 +38,9 @@ export class ProductionSession extends EventEmitter {
 
   async run() {
     try {
-      await this.checkpoint('start');
+      if (this.state.stage === 'init') {
+        await this.checkpoint('start');
+      }
 
       if (this.state.stage === 'init' || this.state.stage === 'start') {
         await this.generateNarration();
@@ -272,10 +275,20 @@ export class ProductionSession extends EventEmitter {
 
     const checkpointData = JSON.parse(readFileSync(checkpointPath, 'utf-8'));
 
+    const options = {
+      ...checkpointData.options,
+      retryPolicy: new RetryPolicy({
+        ...checkpointData.options?.retryPolicy,
+        retryableErrors: Array.isArray(checkpointData.options?.retryPolicy?.retryableErrors)
+          ? checkpointData.options.retryPolicy.retryableErrors
+          : undefined,
+      }),
+    };
+
     const session = new ProductionSession(
       checkpointData.script,
       sdk,
-      checkpointData.options
+      options
     );
 
     session.state = checkpointData;

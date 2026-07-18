@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "clawforge": {
+      "transport": "sse",
+      "url": "http://clawforge:3100/mcp",
+      "description": "ClawForge video production toolkit — generate demo videos from YAML scripts with AI voiceover and browser recording",
+      "tools": [
+        "clawforge_produce_video",
+        "clawforge_validate_script",
+        "clawforge_check_dependencies",
+        "clawforge_dry_run"
+      ]
+    }
+  }
+}

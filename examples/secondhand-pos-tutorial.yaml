@@ -1,0 +1,97 @@
+project:
+  name: "Secondhand POS — วิดีโอแนะนำการใช้งาน"
+  url: "http://localhost:8080"
+  output: "./output-pos-tutorial"
+  viewport:
+    width: 1280
+    height: 720
+
+voice:
+  engine: "edge-tts"
+  voice: "th-TH-PremwadeeNeural"
+  rate: "-5%"
+
+scenes:
+  - name: "intro"
+    narration: >
+      พี่หนุ่มครับ ผมรู้ว่าการดูแล 4 สาขาพร้อมกันมันหนักแค่ไหน
+      ระบบนี้สร้างมาเพื่อร้านรักษ์สะอาดโดยเฉพาะ ไม่ใช่ซอฟต์แวร์กลางๆ
+      แต่คิดมาจากปัญหาจริงของร้านรับซื้อของเก่าเลยครับ มาดูกันเลย
+    pauseAfter: 500
+    actions:
+      - { type: "goto", url: "http://localhost:8080" }
+      - { type: "wait", ms: 3000 }
+
+  - name: "dashboard"
+    narration: >
+      เปิดมาหน้าแรก เห็นเลยครับ ว่าวันนี้รับซื้อไปเท่าไหร่ แต่ละสาขาเป็นยังไง
+      ไม่ต้องโทรถาม ไม่ต้องรอรายงาน นั่งที่บ้านก็รู้ว่าวันนี้เป็นยังไงครับ
+    pauseAfter: 500
+    actions:
+      - { type: "wait", ms: 1500 }
+      - { type: "fill", selector: "input[name='username'], input[type='text']", text: "admin" }
+      - { type: "wait", ms: 400 }
+      - { type: "fill", selector: "input[name='password'], input[type='password']", text: "admin" }
+      - { type: "wait", ms: 400 }
+      - { type: "click", selector: "button[type='submit'], .btn-login, input[type='submit']" }
+      - { type: "wait", ms: 2500 }
+
+  - name: "pos-screen"
+    narration: >
+      หน้าจอสำหรับพนักงานที่เคาน์เตอร์ ออกแบบให้ใช้งานง่าย ไม่กี่ขั้นตอน
+      พนักงานใหม่ก็ใช้ได้เลย ลูกค้าไม่ต้องรอนานครับ
+    pauseAfter: 500
+    actions:
+      - { type: "goto", url: "http://localhost:8080/pos/" }
+      - { type: "wait", ms: 2500 }
+
+  - name: "purchase-order"
+    narration: >
+      การรับซื้อของแต่ละชิ้น ถ้าจดมือผิดพลาดได้ง่าย และตามย้อนหลังยาก
+      หน้านี้บันทึกครบ ทั้งประเภทสินค้า ราคา ชื่อผู้ขาย
+      มีปัญหาทีหลัง เปิดดูได้เลยว่าใครรับซื้อ ราคาเท่าไหร่ วันไหนครับ
+    pauseAfter: 500
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/purchase-orders.html" }
+      - { type: "wait", ms: 2500 }
+
+  - name: "price-tiers"
+    narration: >
+      ราคารับซื้อไม่เท่ากันแต่ละสาขา นี่คือต้นเหตุของปัญหาเยอะมากครับ
+      ตั้งราคากลางไว้ในระบบได้เลย แยกตามประเภทและเกรดสินค้า
+      พนักงานทุกสาขาเห็นราคาเดียวกัน ไม่มีใครต่อราคาเองตามใจครับ
+    pauseAfter: 500
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/price-tiers.html" }
+      - { type: "wait", ms: 2500 }
+
+  - name: "sellers"
+    narration: >
+      คนที่เอาของมาขายประจำ พี่หนุ่มอาจจำหน้าได้ แต่พนักงานสาขาอื่นไม่รู้จัก
+      ระบบเก็บประวัติผู้ขายทุกคน ดูได้ว่าใครมาบ่อย เอาของประเภทไหนมา
+      ช่วยให้ทุกสาขาดูแลลูกค้าประจำได้เหมือนกันครับ
+    pauseAfter: 500
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/sellers.html" }
+      - { type: "wait", ms: 2500 }
+
+  - name: "reports"
+    narration: >
+      สิ้นเดือนนั่งรวมยอดจากสมุดหลายเล่มมันเสียเวลามากครับ
+      รายงานในระบบดึงได้ทันที แยกตามสาขา ตามพนักงาน ตามประเภทสินค้า
+      ส่งออกได้เลย พร้อมให้นักบัญชีหรือพี่หนุ่มดูเองครับ
+    pauseAfter: 500
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/reports.html" }
+      - { type: "wait", ms: 2500 }
+
+  - name: "outro"
+    narration: >
+      ระบบนี้สร้างโดย Novapulse Team และ Dr.Solodev ครับ
+      เราไม่ได้ขายซอฟต์แวร์กลางๆ แต่นั่งคุยกับเจ้าของร้านจริงๆ แล้วสร้างให้ตรงปัญหา
+      รับงานพัฒนาระบบซอฟต์แวร์ทุกรูปแบบ ติดต่อได้ทุกเวลาเลยครับ
+      ถ้าพี่หนุ่มอยากปรับอะไรเพิ่ม แจ้งกลับมาได้เลยนะครับ ขอบคุณมากครับ
+    pauseAfter: 1500
+    actions:
+      - { type: "goto", url: "http://localhost:8080" }
+      - { type: "wait", ms: 4000 }

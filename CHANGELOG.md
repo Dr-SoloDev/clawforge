@@ -12,14 +12,23 @@ All notable changes to ClawForge will be documented in this file.
   - Step-by-step scene builder with all action types
 - **`clawforge demo` command** — run self-demo with a single command, no args needed
 - **Auto-debug on Playwright failure** (`src/recorder.js`) — auto-screenshot + DOM dump when browser actions fail
-- **Docker support** — `Dockerfile` + `docker-compose.yml` + `.dockerignore`
+- **BuildingAI MCP SSE Integration** — HTTP/SSE transport (`clawforge-mcp-sse/`)
+  - `GET /mcp` for SSE sessions, `POST /mcp?sessionId=...` for JSON-RPC
+  - `GET /health` with dependency probing
+  - CORS, session TTL (30min), body parsing
+- **Containerization** — `docker-compose.buildingai.yml` with Postgres + Redis + BuildingAI + ClawForge
 - **Init wizard test suite** (`test/init-wizard.test.js`) — 5 tests covering all templates and YAML output
-- **`cli --help` update** — shows all commands with descriptions
+
+### Fixed
+- **Audit remediation** — 8 findings fixed: missing `express` install, POST 400 handling, session leak, Dockerfile hardening, CORS, health endpoint, non-root user, `.dockerignore`
 
 ### Changed
 - **Version bump** — 0.3.0 → 0.4.0
 - **package.json** — added `demo`, `init`, `test:watch` scripts; expanded keywords
 - **`bin/clawforge.js`** — top-level `resolve` import, cleaner help text
+
+### Notes
+- `SSEServerTransport` deprecated in MCP SDK 1.29.0 in favor of `StreamableHTTPServerTransport`. Both work; SSE chosen for BuildingAI compatibility.
 
 ## [0.3.0] - 2026-05-24
 

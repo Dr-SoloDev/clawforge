@@ -1,0 +1,132 @@
+# Secondhand POS — Full Demo Video Script
+# วิดีโอแนะนำการใช้งานระบบรับซื้อของเก่าแบบครบวงจร
+
+project:
+  name: "Secondhand POS Full Demo"
+  url: "http://localhost:8080"
+  output: "./output-pos-full"
+  viewport:
+    width: 1280
+    height: 720
+
+voice:
+  engine: "edge-tts"
+  voice: "th-TH-PremwadeeNeural"
+  rate: "-5%"
+
+scenes:
+  - name: "01-intro"
+    narration: >
+      สวัสดีครับ ขอแนะนำระบบรับซื้อของเก่า สำหรับร้านค้าที่ต้องการระบบจัดการที่ครบวงจร
+      รองรับหลายสาขา การตั้งราคาแบบสามระดับ และจัดการผู้ขายได้ในที่เดียว
+      วันนี้จะพาทุกท่านเดินทางผ่านฟีเจอร์หลักทั้งหมดครับ
+    pauseAfter: 1500
+    actions:
+      - { type: "goto", url: "http://localhost:8080" }
+      - { type: "wait", ms: 4000 }
+
+  - name: "02-login"
+    narration: >
+      เริ่มต้นที่หน้าเข้าสู่ระบบ พนักงานแต่ละคนมีบัญชีของตัวเอง
+      เพื่อให้ระบบบันทึกได้ว่าใครทำรายการอะไรเมื่อไหร่ มีระบบสิทธิ์การเข้าถึงตามบทบาท
+      ทั้งเจ้าของร้าน ผู้จัดการ และพนักงานแคชเชียร์
+    pauseAfter: 1000
+    actions:
+      - { type: "fill", selector: "input[type=text]", text: "admin" }
+      - { type: "wait", ms: 1500 }
+      - { type: "fill", selector: "input[type=password]", text: "admin" }
+      - { type: "wait", ms: 1500 }
+      - { type: "click", selector: "button" }
+      - { type: "wait", ms: 4000 }
+
+  - name: "03-dashboard"
+    narration: >
+      หน้าแดชบอร์ดแสดงภาพรวมของร้าน ยอดขายวันนี้ จำนวนรายการรับซื้อ
+      และข้อมูลสำคัญต่างๆ ในที่เดียว เจ้าของร้านสามารถดูสถานะของทุกสาขาได้แบบเรียลไทม์
+    pauseAfter: 1000
+    actions:
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", dy: 300 }
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "04-price-tiers"
+    narration: >
+      ฟีเจอร์เด่น คือการตั้งราคาแบบสามระดับต่อหมวดหมู่สินค้า
+      เจ้าของร้านหรือผู้จัดการ สามารถกำหนดราคา Tier หนึ่ง Tier สอง Tier สาม
+      ตามดุลพินิจของตัวเอง โดย Tier หนึ่งเป็นราคาปกติ Tier สามเป็นราคาสูงสุด
+      เมื่อพนักงานหน้าร้านเจอลูกค้านำของมาขายเยอะ ก็เลือก Tier ที่เหมาะสมได้
+    pauseAfter: 1000
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/price-tiers.html" }
+      - { type: "wait", ms: 4000 }
+      - { type: "scroll", dy: 200 }
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "05-sellers"
+    narration: >
+      ระบบจัดการผู้ขาย เก็บข้อมูลผู้ที่นำของมาขาย ทั้งชื่อ เบอร์โทร เลขบัตรประชาชน
+      สามารถค้นหาประวัติการขายของแต่ละคนได้ และมีระบบบัญชีดำ
+      สำหรับลูกค้าที่มีปัญหา เพื่อความปลอดภัยของร้าน
+    pauseAfter: 1000
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/sellers.html" }
+      - { type: "wait", ms: 4000 }
+      - { type: "scroll", dy: 200 }
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "06-purchase"
+    narration: >
+      หน้าจอรับซื้อของ คือหัวใจหลักของระบบ พนักงานเลือกผู้ขาย
+      ระบุรายการสินค้า เลือกหมวดหมู่ สภาพสินค้า และเลือก Tier ราคา
+      ระบบจะคำนวณราคาให้อัตโนมัติ ลดความผิดพลาดในการคิดเงิน
+      และบันทึกประวัติทุกอย่างเพื่อตรวจสอบย้อนหลังได้
+    pauseAfter: 1000
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/purchase-orders.html" }
+      - { type: "wait", ms: 4000 }
+      - { type: "scroll", dy: 300 }
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "07-inventory"
+    narration: >
+      สินค้าคงคลัง แสดงรายการของที่รับซื้อมาแล้ว เจ้าของร้านสามารถจัดการ
+      ของในสต็อก ติดตามต้นทุน และวางแผนการขายต่อได้อย่างมีประสิทธิภาพ
+    pauseAfter: 1000
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/inventory.html" }
+      - { type: "wait", ms: 4000 }
+      - { type: "scroll", dy: 200 }
+      - { type: "wait", ms: 2500 }
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "08-reports"
+    narration: >
+      ระบบรายงาน สรุปข้อมูลธุรกิจให้เห็นภาพรวม รายงานยอดขาย
+      รายงานการรับซื้อ และสถิติต่างๆ ช่วยในการตัดสินใจทางธุรกิจได้แม่นยำขึ้น
+    pauseAfter: 1000
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/reports.html" }
+      - { type: "wait", ms: 4000 }
+      - { type: "scroll", dy: 300 }
+      - { type: "wait", ms: 3000 }
+      - { type: "scroll", y: 0 }
+      - { type: "wait", ms: 2000 }
+
+  - name: "09-outro"
+    narration: >
+      ทั้งหมดนี้คือระบบรับซื้อของเก่า ที่ออกแบบมาเพื่อร้านสาขาทั่วประเทศ
+      ใช้งานได้ทั้งบนคอมพิวเตอร์และมือถือ พัฒนาโดยทีมที่เข้าใจธุรกิจรับซื้อของเก่าจริงๆ
+      ขอบคุณที่รับชมครับ
+    pauseAfter: 1500
+    actions:
+      - { type: "goto", url: "http://localhost:8080/admin/index.html" }
+      - { type: "wait", ms: 4000 }

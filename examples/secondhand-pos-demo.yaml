@@ -1,0 +1,41 @@
+# Secondhand POS Demo Video Script
+# วิดีโอแนะนำการใช้งาน Secondhand POS
+
+project:
+  name: "Secondhand POS Demo"
+  url: "http://localhost:8080"
+  output: "./output-pos-demo"
+  viewport:
+    width: 1280
+    height: 720
+
+voice:
+  engine: "edge-tts"
+  voice: "th-TH-PremwadeeNeural"
+  rate: "-5%"
+
+scenes:
+  - name: "intro"
+    narration: >
+      สวัสดีครับ ขอแนะนำระบบรับซื้อของเก่า สำหรับร้านสาขาทั่วประเทศ
+      ใช้งานง่าย รองรับการตั้งราคาแบบสามระดับ และจัดการผู้ขายได้ครบในที่เดียว
+    pauseAfter: 1000
+    actions:
+      - { type: "goto", url: "http://localhost:8080" }
+      - { type: "wait", ms: 3000 }
+
+  - name: "login"
+    narration: >
+      เริ่มต้นที่หน้าเข้าสู่ระบบ พนักงานแต่ละคนมีบัญชีของตัวเอง
+      เพื่อให้ระบบติดตามได้ว่าใครทำรายการอะไร
+    pauseAfter: 1000
+    actions:
+      - { type: "wait", ms: 3000 }
+
+  - name: "outro"
+    narration: >
+      ระบบนี้ออกแบบมาเพื่อร้านรับซื้อของเก่าโดยเฉพาะ
+      ใช้งานได้ทั้งบนคอมพิวเตอร์และมือถือ ขอบคุณที่รับชมครับ
+    pauseAfter: 1000
+    actions:
+      - { type: "wait", ms: 3000 }

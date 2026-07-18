@@ -32,13 +32,25 @@ export async function narrate(script) {
     if (voice.engine === 'edge-tts') {
       const args = [
         '--voice', voice.voice,
-        '--text', scene.narration,
+        '--text', scene.narration.trim(),
         '--write-media', outPath,
       ];
       if (voice.rate) {
         args.push(`--rate=${voice.rate}`);
       }
-      await execFileAsync('edge-tts', args);
+      const delays = [0, 3000, 6000];
+      let lastErr;
+      for (const delay of delays) {
+        if (delay > 0) await new Promise(r => setTimeout(r, delay));
+        try {
+          await execFileAsync('edge-tts', args);
+          lastErr = null;
+          break;
+        } catch (err) {
+          lastErr = err;
+        }
+      }
+      if (lastErr) throw lastErr;
     } else {
       throw new Error(`Unsupported voice engine: ${voice.engine} (supported: edge-tts)`);
     }

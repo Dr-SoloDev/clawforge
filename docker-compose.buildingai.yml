@@ -1,0 +1,69 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: buildingai
+      POSTGRES_USER: buildingai
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U buildingai"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  buildingai:
+    image: buildingai:latest
+    build:
+      context: ./BuildingAI
+      dockerfile: Dockerfile
+    ports:
+      - "4090:4090"
+    environment:
+      APP_DOMAIN: "http://localhost:4090"
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: buildingai
+      DB_USER: buildingai
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - buildingai_storage:/app/storage
+
+  clawforge:
+    build:
+      context: .
+      dockerfile: clawforge-mcp-sse/Dockerfile
+    ports:
+      - "127.0.0.1:3100:3100"
+    environment:
+      PORT: 3100
+      NODE_ENV: production
+    volumes:
+      - /dev/shm:/dev/shm
+      - clawforge_output:/app/output
+    shm_size: 2gb
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+
+volumes:
+  pgdata:
+  buildingai_storage:
+  clawforge_output:
