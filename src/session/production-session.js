@@ -32,7 +32,13 @@ export class ProductionSession extends EventEmitter {
       checkpoints: [],
     };
 
-    this.checkpointDir = resolve(options.checkpointDir || './.clawforge-checkpoints');
+    // Checkpoints live under the output dir by default — it is writable by
+    // construction (clips + audio must land there anyway), unlike cwd which
+    // may be read-only (e.g. /). Explicit options.checkpointDir still wins.
+    const outputDir = script?.project?.output || '.';
+    this.checkpointDir = resolve(
+      options.checkpointDir || join(outputDir, '.clawforge-checkpoints')
+    );
     this.retryPolicy = options.retryPolicy || sdk.options.retryPolicy;
   }
 
@@ -235,30 +241,39 @@ export class ProductionSession extends EventEmitter {
     this.state.timestamp = Date.now();
     Object.assign(this.state, data);
 
-    mkdirSync(this.checkpointDir, { recursive: true });
+    // Checkpoints are a resume aid, not the product — a write failure must
+    // never kill a run (nor mask the real error on the error path).
+    // Warn and continue with checkpoints disabled for this run.
+    try {
+      mkdirSync(this.checkpointDir, { recursive: true });
 
-    const checkpointPath = join(
-      this.checkpointDir,
-      `${this.script.project.name}-${stage}-${Date.now()}.json`
-    );
+      const checkpointPath = join(
+        this.checkpointDir,
+        `${this.script.project.name}-${stage}-${Date.now()}.json`
+      );
 
-    const checkpointData = {
-      ...this.state,
-      script: this.script,
-      options: this.options,
-    };
+      const checkpointData = {
+        ...this.state,
+        script: this.script,
+        options: this.options,
+      };
 
-    writeFileSync(checkpointPath, JSON.stringify(checkpointData, null, 2));
+      writeFileSync(checkpointPath, JSON.stringify(checkpointData, null, 2));
 
-    this.state.checkpoints.push(checkpointPath);
+      this.state.checkpoints.push(checkpointPath);
 
-    this.emit('checkpoint', {
-      stage,
-      path: checkpointPath,
-      state: this.state,
-    });
+      this.emit('checkpoint', {
+        stage,
+        path: checkpointPath,
+        state: this.state,
+      });
 
-    return checkpointPath;
+      return checkpointPath;
+    } catch (err) {
+      console.warn(`  ⚠️ Checkpoint '${stage}' skipped (${err.message}) — continuing without resume support`);
+      this.emit('checkpoint', { stage, path: null, state: this.state });
+      return null;
+    }
   }
 
   static async fromCheckpoint(checkpointPath, sdk) {
