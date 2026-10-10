@@ -29,6 +29,15 @@ output-*/
 .DS_Store
 Thumbs.db
 
+# ClawForge checkpoints (resume aids, local only)
+.clawforge-checkpoints/
+
+# Stray non-project drafts (local only, nothing references them)
+marketing-content.md
+sales-pitch.md
+video-script.md
+test_tts.py
+
 # IDE
 .vscode/
 .idea/
