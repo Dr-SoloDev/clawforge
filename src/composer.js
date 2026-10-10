@@ -8,7 +8,7 @@
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { existsSync, mkdirSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 
 import {
   buildNarrationTimeline,
@@ -177,7 +177,8 @@ async function mergeVideoAudio(videoPath, audioPath, outputDir, finalPath,
     let videoOut = overlay.videoOut;
 
     if (hasSubtitles) {
-      const absSrtPath = join(process.cwd(), srtPath);
+      // resolve() keeps absolute paths intact (join(cwd, abs) would double it)
+      const absSrtPath = resolve(srtPath);
       filterChain += `; ${videoOut}subtitles='${absSrtPath}'[v_final]`;
       videoOut = '[v_final]';
     }
@@ -190,7 +191,8 @@ async function mergeVideoAudio(videoPath, audioPath, outputDir, finalPath,
     }
   } else if (hasSubtitles) {
     // Simple subtitle burn-in (no -filter_complex needed)
-    const absSrtPath = join(process.cwd(), srtPath);
+    // resolve() keeps absolute paths intact (join(cwd, abs) would double it)
+    const absSrtPath = resolve(srtPath);
     ffmpegArgs.push('-vf', `subtitles='${absSrtPath}'`);
     console.log('  📝 Subtitles enabled');
   }
