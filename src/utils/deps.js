@@ -5,6 +5,7 @@
 
 import { execFile } from 'child_process';
 import { promisify } from 'util';
+import { existsSync } from 'fs';
 
 const execFileAsync = promisify(execFile);
 
@@ -18,15 +19,27 @@ export async function checkCommand(command) {
 }
 
 export async function checkPlaywright() {
+  // executablePath() แค่คืนสตริง ไม่ได้เช็คไฟล์ — เคยเขียวหลอกทั้งที่ไบนารีหาย
+  // (โดนจริง: cache มี 1228 แต่ playwright ตัวนี้เรียก 1223 → record ล้มทั้งก้อน)
+  // เลยต้อง smoke-launch headless จริงแบบเดียวกับ recorder (headless shell โดยเฉพาะ)
   try {
     const { chromium } = await import('playwright');
-    await chromium.executablePath();
+    const exe = chromium.executablePath();
+    if (!exe || !existsSync(exe)) {
+      return {
+        installed: false,
+        command: 'playwright',
+        message: `Chromium binary missing: ${exe || '(unknown path)'}. Run: npx --package=playwright@<your-clawforge-pinned-version> playwright install chromium`,
+      };
+    }
+    const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
+    await browser.close();
     return { installed: true, command: 'playwright' };
   } catch (error) {
     return {
       installed: false,
       command: 'playwright',
-      message: 'Run: npx playwright install chromium'
+      message: `Playwright browser launch failed (${error.message?.split('\n')[0] || error}). Run: npx playwright install chromium`,
     };
   }
 }
